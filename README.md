@@ -9,6 +9,7 @@ A powerful testing framework built on top of Playwright and Cucumber, designed t
 - 🎨 **Modern UI Testing**: Built on Playwright for reliable cross-browser testing
 - 🔒 **Data Masking**: Built-in support for masking sensitive data
 - 🛠️ **CLI Tools**: Easy project management and test creation
+- 🔄 **Self-Healing Locators**: Automatic recovery from locator failures
 
 ## Installation
 
@@ -81,6 +82,77 @@ const { debug } = require('./lib/mask');
 // Show all masked values and their originals
 debug();
 ```
+
+## Self-Healing Locators
+
+The framework includes a powerful self-healing mechanism that automatically recovers from locator failures by trying alternative locators.
+
+### Setting Up Multiple Locators
+
+```javascript
+// pages/locators/todo.locators.js
+class TodoLocators {
+    constructor(page) {
+        this.page = page;
+        // Define multiple locators for the same element
+        this.todoInput = [
+            'input[placeholder="What needs to be done?"]',
+            'input.new-todo',
+            '[data-testid="todo-input"]'
+        ];
+    }
+}
+```
+
+### Using Self-Healing in Actions
+
+```javascript
+// pages/actions/todo.actions.js
+class TodoActions {
+    constructor(bingoPage) {
+        this.bingoPage = bingoPage;
+        this.todo = new LocatorManager(bingoPage.page).todo;
+    }
+
+    async addTodoItem(todoText) {
+        // The framework will try each locator until one works
+        const input = await this.bingoPage.waitForElement(this.todo.todoInput);
+        await input.fill(todoText);
+        await input.press('Enter');
+    }
+}
+```
+
+### Configuration
+
+Create a `bingo.config.js` file in your project root to customize self-healing behavior:
+
+```javascript
+module.exports = {
+    selfHealing: {
+        maxTimeout: 30000,    // Maximum time to wait for element (ms)
+        retryInterval: 1000,  // Time between retries (ms)
+        maxRetries: 3         // Maximum number of retry attempts
+    }
+};
+```
+
+### Best Practices for Self-Healing
+
+1. **Locator Priority**
+   - Order locators from most specific to least specific
+   - Use data-testid attributes as primary locators
+   - Include fallback locators for different page states
+
+2. **Performance**
+   - Limit the number of alternative locators
+   - Use appropriate timeouts for your application
+   - Consider using different configurations for different environments
+
+3. **Maintenance**
+   - Regularly review and update locators
+   - Remove obsolete locators
+   - Add new locators when UI changes
 
 ## CLI Commands
 
