@@ -4,11 +4,8 @@ const LocatorManager = require('../pages/locators');
 const TodoActions = require('../pages/actions/todo.actions');
 
 Given('I am on the todo page', async function() {
-    // Initialize locators
-    this.locators = new LocatorManager(this.page);
-    this.todo = this.locators.todo;
     // Initialize actions
-    this.todoActions = new TodoActions(this.bingoPage, this.todo);
+    this.todoActions = new TodoActions(this.bingoPage);
     // Navigate to page
     await this.todoActions.navigateToTodoPage();
 });

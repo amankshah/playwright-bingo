@@ -1,9 +1,10 @@
 const { expect } = require('@playwright/test');
+const LocatorManager = require('../locators');
 
 class TodoActions {
-    constructor(bingoPage, todo) {
+    constructor(bingoPage) {
         this.bingoPage = bingoPage;
-        this.todo = todo;
+        this.todo = new LocatorManager(bingoPage.page).todo;
     }
 
     async navigateToTodoPage() {

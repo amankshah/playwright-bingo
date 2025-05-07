@@ -1,6 +1,14 @@
 # Playwright Bingo
 
-A powerful Playwright framework with self-healing capabilities and page object model support.
+A Playwright-based testing framework with self-healing capabilities and Cucumber integration.
+
+## Features
+
+- Self-healing locators
+- Cucumber BDD integration
+- Page Object Model support
+- Screenshot capture on test failure
+- Configurable timeouts and retries
 
 ## Installation
 
@@ -8,77 +16,7 @@ A powerful Playwright framework with self-healing capabilities and page object m
 npm install playwright-bingo
 ```
 
-## Project Setup
-
-After installation, initialize your project:
-
-```bash
-npx playwright-bingo init
-```
-
-This will create the following structure:
-```
-├── features/              # Cucumber feature files
-├── pages/                 # Page Object Model
-│   ├── actions/          # Page actions
-│   └── locators/         # Page locators
-├── step-definitions/     # Cucumber step definitions
-├── support/              # Support files
-└── tests/               # Test files
-```
-
-## Usage
-
-### Creating a New Page
-
-```bash
-bingo add page "login"
-```
-
-This will create:
-- `pages/actions/login.actions.js`
-- `pages/locators/login.locators.js`
-- `step-definitions/login.steps.js`
-
-### Updating a Page Name
-
-```bash
-bingo update page "login" "auth"
-```
-
-### Deleting a Page
-
-```bash
-bingo delete page "login"
-```
-
-## Running Tests
-
-```bash
-# Run tests
-npm test
-
-# Run tests with Allure report
-npm run test:allure
-
-# Open Allure report
-npm run test:allure:open
-```
-
-## Features
-
-- Self-healing locators with configurable retry mechanisms
-- Page Object Model support
-- Cucumber BDD integration
-- Allure reporting
-- CLI tools for managing pages and actions
-- Cross-browser support (Chromium, Firefox, WebKit)
-
-## Self-Healing Locators
-
-The framework provides self-healing capabilities through the `BingoPage` class. You can use multiple locators for the same element, and the framework will try each one until it finds the element.
-
-### Configuration
+## Configuration
 
 Create a `bingo.config.js` file in your project root:
 
@@ -92,83 +30,125 @@ module.exports = {
 };
 ```
 
-### Usage
+## Usage
+
+### Basic Page Object Setup
 
 ```javascript
-const { BingoFactory } = require('playwright-bingo');
+const { BingoPage } = require('playwright-bingo');
 
-async function example() {
-    // Create a new page
-    const page = await BingoFactory.createPage('chromium');
+// In your step definitions
+Given('I am on the todo page', async function() {
+    // Initialize actions
+    this.todoActions = new TodoActions(this.bingoPage);
+    // Navigate to page
+    await this.todoActions.navigateToTodoPage();
+});
+```
 
-    // Navigate to a page
-    await page.goto('https://example.com');
+### Using Self-Healing Locators
 
-    // Use multiple locators for the same element
-    await page.click([
-        '#submit-button',
-        'button[type="submit"]',
-        '//button[contains(text(), "Submit")]'
-    ]);
+```javascript
+// In your locators file
+class TodoLocators {
+    constructor(page) {
+        this.page = page;
+        // Define multiple locators for the same element
+        this.todoInput = [
+            'input[placeholder="What needs to be done?"]',
+            'input.new-todo'
+        ];
+    }
+}
 
-    // Fill a form field with multiple possible locators
-    await page.fill([
-        '#username',
-        'input[name="username"]',
-        '//input[@placeholder="Enter username"]'
-    ], 'testuser');
-
-    // Check if an element is visible using multiple locators
-    const isVisible = await page.isVisible([
-        '.success-message',
-        '#success',
-        '//div[contains(@class, "success")]'
-    ]);
+// In your actions file
+async addTodoItem(todoText) {
+    const input = await this.bingoPage.waitForElement(this.todo.todoInput);
+    await input.fill(todoText);
+    await input.press('Enter');
 }
 ```
 
 ## Page Object Model
 
-The framework includes CLI tools to help you manage your page objects:
+The framework includes a structured approach to Page Object Model:
 
-```bash
-# Create a new page
-npx bingo create-page login
+### Locators
+```javascript
+// pages/locators/todo.locators.js
+class TodoLocators {
+    constructor(page) {
+        this.page = page;
+        this.todoInput = 'input.new-todo';
+        this.todoList = '.todo-list';
+    }
+}
+```
 
-# Create a new action
-npx bingo create-action login submit
+### Actions
+```javascript
+// pages/actions/todo.actions.js
+class TodoActions {
+    constructor(bingoPage) {
+        this.bingoPage = bingoPage;
+        this.todo = new LocatorManager(bingoPage.page).todo;
+    }
 
-# Create a new locator
-npx bingo create-locator login submit-button
+    async addTodoItem(todoText) {
+        const input = await this.bingoPage.waitForElement(this.todo.todoInput);
+        await input.fill(todoText);
+        await input.press('Enter');
+    }
+}
+```
+
+### Step Definitions
+```javascript
+// step-definitions/todo.steps.js
+Given('I am on the todo page', async function() {
+    this.todoActions = new TodoActions(this.bingoPage);
+    await this.todoActions.navigateToTodoPage();
+});
+
+When('I add a new todo item {string}', async function(todoText) {
+    await this.todoActions.addTodoItem(todoText);
+});
 ```
 
 ## API Reference
 
-### BingoFactory
-
-- `createPage(browserType = 'chromium', options = {})`: Creates a new page instance
-- `createPages(browserType = 'chromium', count = 1, options = {})`: Creates multiple page instances
-
 ### BingoPage
 
-The `BingoPage` class extends Playwright's `Page` class with self-healing capabilities. All methods that accept a locator can now accept an array of locators:
+The `BingoPage` class extends Playwright's `Page` class with self-healing capabilities:
 
-- `click(locatorArray, options)`
-- `fill(locatorArray, value, options)`
-- `type(locatorArray, text, options)`
-- `selectOption(locatorArray, values, options)`
-- `check(locatorArray, options)`
-- `uncheck(locatorArray, options)`
-- `getAttribute(locatorArray, name, options)`
-- `textContent(locatorArray, options)`
-- `innerText(locatorArray, options)`
-- `isVisible(locatorArray, options)`
-- `isEnabled(locatorArray, options)`
+- `waitForElement(locator, options)`: Wait for an element to be ready
+- `findElement(locator, options)`: Find an element without waiting
+- `elementExists(locator, options)`: Check if an element exists
+- `waitForElementHidden(locator, options)`: Wait for element to be hidden
+- `waitForElementDetached(locator, options)`: Wait for element to be detached
 
-## License
+### Options
 
-MIT
+All element methods accept the following options:
+
+```javascript
+{
+    timeout: 30000,        // Maximum time to wait (ms)
+    retryInterval: 1000,   // Time between retries (ms)
+    maxRetries: 3,         // Maximum number of retry attempts
+    state: 'visible',      // Element state to wait for
+    checkExistence: true   // Whether to check element existence
+}
+```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 
