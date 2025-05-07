@@ -39,6 +39,12 @@ jobs:
         sudo tar -zxvf allure-2.24.0.tgz -C /opt/
         sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
     
+    - name: Debug env
+      run: |
+        echo "TEST_EMAIL is set: [${{ secrets.TEST_EMAIL != '' }}]"
+        echo "TEST_PASSWORD is set: [${{ secrets.TEST_PASSWORD != '' }}]"
+        echo "BINGO_MASK_SALT is set: [${{ secrets.BINGO_MASK_SALT != '' }}]"
+    
     - name: Run Cucumber tests
       run: npm run test
       env:
