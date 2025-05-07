@@ -4,6 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const { program } = require('commander');
 const { initializeProject } = require('./init');
+const { mask: maskData, env } = require('../lib/mask');
+const MaskedValue = require('../lib/masked-value');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
+
+// Ensure we have a salt
+if (!process.env.BINGO_MASK_SALT) {
+    console.warn('⚠️  Warning: BINGO_MASK_SALT not found in environment variables. Using default salt.');
+}
 
 const [,, cmd, type, oldName, newName] = process.argv;
 
@@ -171,6 +182,31 @@ function updatePage(oldPageName, newPageName) {
   console.log(`Page '${oldPageName}' updated to '${newPageName}'.`);
 }
 
+function maskData(value) {
+    if (!value) {
+        console.error('❌ Error: No value provided to mask');
+        return;
+    }
+
+    // Mask the value using our mask function
+    const masked = maskData(value);
+    
+    console.log('\n🔒 Masked Value:');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('Original:', value);
+    console.log('Masked:  ', masked);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('\n📝 Usage:');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('1. Add to your .env file:');
+    console.log(`   TEST_EMAIL=${masked}`);
+    console.log('\n2. Use in your code:');
+    console.log('   const { env } = require(\'./lib/mask\');');
+    console.log('   const email = env.TEST_EMAIL;');
+    console.log('\n💡 Note: The value will be automatically decrypted when accessed.');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+}
+
 program
     .name('bingo')
     .description('CLI for Playwright Bingo framework')
@@ -229,5 +265,13 @@ program
         .action((name) => {
             deletePage(name);
         }));
+
+program
+    .command('mask')
+    .description('Mask sensitive data')
+    .argument('<data>', 'data to mask')
+    .action((data) => {
+        maskData(data);
+    });
 
 program.parse(); 

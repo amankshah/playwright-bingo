@@ -30,7 +30,8 @@
     "@playwright/test": "^1.52.0",
     "allure-cucumberjs": "^3.2.1",
     "allure-playwright": "^3.2.1",
-    "commander": "^11.1.0"
+    "commander": "^11.1.0",
+    "dotenv": "^16.5.0"
   },
   "devDependencies": {
     "rimraf": "^5.0.5"
