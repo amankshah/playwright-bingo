@@ -13,12 +13,25 @@ function toClassName(name) {
   return capitalize(name) + (type === 'page' ? '' : capitalize(type));
 }
 
+function getProjectRoot() {
+  // If we're in a node_modules directory, go up to the project root
+  let currentDir = process.cwd();
+  while (currentDir !== path.parse(currentDir).root) {
+    if (fs.existsSync(path.join(currentDir, 'package.json'))) {
+      return currentDir;
+    }
+    currentDir = path.dirname(currentDir);
+  }
+  return process.cwd();
+}
+
 function addPage(pageName) {
+  const projectRoot = getProjectRoot();
   const className = capitalize(pageName) + 'Actions';
   const locatorClassName = capitalize(pageName) + 'Locators';
-  const actionsPath = path.join(__dirname, 'pages', 'actions', `${pageName}.actions.js`);
-  const locatorsPath = path.join(__dirname, 'pages', 'locators', `${pageName}.locators.js`);
-  const stepsPath = path.join(__dirname, 'step-definitions', `${pageName}.steps.js`);
+  const actionsPath = path.join(projectRoot, 'pages', 'actions', `${pageName}.actions.js`);
+  const locatorsPath = path.join(projectRoot, 'pages', 'locators', `${pageName}.locators.js`);
+  const stepsPath = path.join(projectRoot, 'step-definitions', `${pageName}.steps.js`);
 
   if (fs.existsSync(actionsPath) || fs.existsSync(locatorsPath) || fs.existsSync(stepsPath)) {
     console.error('Page already exists.');
@@ -67,6 +80,11 @@ Given('I am on the ${pageName} page', async function() {
 // });
 `;
 
+  // Ensure directories exist
+  fs.mkdirSync(path.dirname(actionsPath), { recursive: true });
+  fs.mkdirSync(path.dirname(locatorsPath), { recursive: true });
+  fs.mkdirSync(path.dirname(stepsPath), { recursive: true });
+
   fs.writeFileSync(actionsPath, actionsContent);
   fs.writeFileSync(locatorsPath, locatorsContent);
   fs.writeFileSync(stepsPath, stepsContent);
@@ -74,9 +92,10 @@ Given('I am on the ${pageName} page', async function() {
 }
 
 function deletePage(pageName) {
-  const actionsPath = path.join(__dirname, 'pages', 'actions', `${pageName}.actions.js`);
-  const locatorsPath = path.join(__dirname, 'pages', 'locators', `${pageName}.locators.js`);
-  const stepsPath = path.join(__dirname, 'step-definitions', `${pageName}.steps.js`);
+  const projectRoot = getProjectRoot();
+  const actionsPath = path.join(projectRoot, 'pages', 'actions', `${pageName}.actions.js`);
+  const locatorsPath = path.join(projectRoot, 'pages', 'locators', `${pageName}.locators.js`);
+  const stepsPath = path.join(projectRoot, 'step-definitions', `${pageName}.steps.js`);
 
   let deleted = false;
   if (fs.existsSync(actionsPath)) {
@@ -100,13 +119,14 @@ function deletePage(pageName) {
 }
 
 function updatePage(oldPageName, newPageName) {
-  const oldActionsPath = path.join(__dirname, 'pages', 'actions', `${oldPageName}.actions.js`);
-  const oldLocatorsPath = path.join(__dirname, 'pages', 'locators', `${oldPageName}.locators.js`);
-  const oldStepsPath = path.join(__dirname, 'step-definitions', `${oldPageName}.steps.js`);
+  const projectRoot = getProjectRoot();
+  const oldActionsPath = path.join(projectRoot, 'pages', 'actions', `${oldPageName}.actions.js`);
+  const oldLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${oldPageName}.locators.js`);
+  const oldStepsPath = path.join(projectRoot, 'step-definitions', `${oldPageName}.steps.js`);
   
-  const newActionsPath = path.join(__dirname, 'pages', 'actions', `${newPageName}.actions.js`);
-  const newLocatorsPath = path.join(__dirname, 'pages', 'locators', `${newPageName}.locators.js`);
-  const newStepsPath = path.join(__dirname, 'step-definitions', `${newPageName}.steps.js`);
+  const newActionsPath = path.join(projectRoot, 'pages', 'actions', `${newPageName}.actions.js`);
+  const newLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${newPageName}.locators.js`);
+  const newStepsPath = path.join(projectRoot, 'step-definitions', `${newPageName}.steps.js`);
 
   // Check if old files exist
   if (!fs.existsSync(oldActionsPath) || !fs.existsSync(oldLocatorsPath) || !fs.existsSync(oldStepsPath)) {
