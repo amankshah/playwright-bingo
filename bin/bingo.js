@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { program } = require('commander');
+const { initializeProject } = require('./init');
 
 const [,, cmd, type, oldName, newName] = process.argv;
 
@@ -169,13 +171,63 @@ function updatePage(oldPageName, newPageName) {
   console.log(`Page '${oldPageName}' updated to '${newPageName}'.`);
 }
 
-if (cmd === 'add' && type === 'page' && oldName) {
-  addPage(oldName);
-} else if (cmd === 'delete' && type === 'page' && oldName) {
-  deletePage(oldName);
-} else if (cmd === 'update' && type === 'page' && oldName && newName) {
-  updatePage(oldName, newName);
-} else {
-  console.log('Usage: bingo add page <pagename>\n       bingo delete page <pagename>\n       bingo update page <oldpagename> <newpagename>');
-  process.exit(1);
-} 
+program
+    .name('bingo')
+    .description('CLI for Playwright Bingo framework')
+    .version('1.0.0');
+
+program
+    .command('init')
+    .description('Initialize a new Playwright Bingo project')
+    .action(() => {
+        initializeProject();
+    });
+
+program
+    .command('add')
+    .description('Add a new component')
+    .addCommand(new program.Command('page')
+        .description('Add a new page')
+        .argument('<name>', 'name of the page')
+        .action((name) => {
+            addPage(name);
+        }))
+    .addCommand(new program.Command('action')
+        .description('Add a new action')
+        .argument('<page>', 'name of the page')
+        .argument('<name>', 'name of the action')
+        .action((page, name) => {
+            // Implementation for adding an action
+            console.log(`Adding action ${name} to page ${page}`);
+        }))
+    .addCommand(new program.Command('locator')
+        .description('Add a new locator')
+        .argument('<page>', 'name of the page')
+        .argument('<name>', 'name of the locator')
+        .action((page, name) => {
+            // Implementation for adding a locator
+            console.log(`Adding locator ${name} to page ${page}`);
+        }));
+
+program
+    .command('update')
+    .description('Update a component')
+    .addCommand(new program.Command('page')
+        .description('Update a page name')
+        .argument('<oldName>', 'current name of the page')
+        .argument('<newName>', 'new name for the page')
+        .action((oldName, newName) => {
+            updatePage(oldName, newName);
+        }));
+
+program
+    .command('delete')
+    .description('Delete a component')
+    .addCommand(new program.Command('page')
+        .description('Delete a page')
+        .argument('<name>', 'name of the page')
+        .action((name) => {
+            deletePage(name);
+        }));
+
+program.parse(); 

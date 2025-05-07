@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require('fs');
 const path = require('path');
 
@@ -24,6 +26,24 @@ function copyDir(src, dest) {
   }
 }
 
+function createDirectories(projectRoot) {
+  const directories = [
+    'features',
+    'pages/actions',
+    'pages/locators',
+    'step-definitions',
+    'support',
+    'tests'
+  ];
+
+  directories.forEach(dir => {
+    const dirPath = path.join(projectRoot, dir);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+  });
+}
+
 function initializeProject() {
   const templateDir = path.join(__dirname, '..', 'templates');
   const targetDir = process.cwd();
@@ -34,6 +54,9 @@ function initializeProject() {
     console.log('Warning: Target directory is not empty. Skipping initialization.');
     return;
   }
+
+  // Create necessary directories
+  createDirectories(targetDir);
 
   // Copy template files
   copyDir(templateDir, targetDir);
@@ -59,4 +82,9 @@ function initializeProject() {
   console.log('3. Start creating your tests using: bingo add page <pagename>');
 }
 
-initializeProject(); 
+// Only run if this file is being executed directly
+if (require.main === module) {
+  initializeProject();
+}
+
+module.exports = { initializeProject }; 

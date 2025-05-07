@@ -1,15 +1,15 @@
 {
   "name": "playwright-bingo",
   "version": "1.0.0",
-  "description": "A BDD framework for Playwright with Cucumber",
-  "main": "index.js",
+  "description": "A powerful Playwright framework with self-healing capabilities and page object model support",
+  "main": "lib/index.js",
   "bin": {
     "bingo": "./bin/bingo.js"
   },
   "scripts": {
-    "test": "node ./node_modules/@cucumber/cucumber/bin/cucumber-js --format progress-bar",
-    "test:allure": "rimraf allure-results && node ./node_modules/@cucumber/cucumber/bin/cucumber-js --format progress-bar && allure generate ./allure-results --clean",
-    "test:allure:open": "rimraf allure-results && node ./node_modules/@cucumber/cucumber/bin/cucumber-js --format progress-bar && allure generate ./allure-results --clean && allure open allure-report"
+    "test": "cucumber-js",
+    "test:allure": "rimraf allure-results && cucumber-js && allure generate ./allure-results --clean",
+    "test:allure:open": "rimraf allure-results && cucumber-js && allure generate ./allure-results --clean && allure open allure-report"
   },
   "keywords": [
     "playwright",
@@ -22,12 +22,17 @@
   "license": "ISC",
   "files": [
     "bin",
-    "index.js"
+    "lib",
+    "templates"
   ],
   "dependencies": {
     "@cucumber/cucumber": "^11.2.0",
     "@playwright/test": "^1.52.0",
     "allure-cucumberjs": "^3.2.1",
-    "allure-playwright": "^3.2.1"
+    "allure-playwright": "^3.2.1",
+    "commander": "^11.1.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
   }
 }

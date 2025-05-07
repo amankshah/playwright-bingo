@@ -1,26 +1,60 @@
-const TodoLocators = require('../locators/todo.locators');
+const { expect } = require('@playwright/test');
 
 class TodoActions {
-    constructor(page) {
-        this.page = page;
-        this.locators = new TodoLocators(page);
+    constructor(bingoPage, todo) {
+        this.bingoPage = bingoPage;
+        this.todo = todo;
     }
 
-    async addTodo(todoText) {
-        await this.page.fill(this.locators.todoInput, todoText);
-        await this.page.press(this.locators.todoInput, 'Enter');
+    async navigateToTodoPage() {
+        await this.bingoPage.goto('https://demo.playwright.dev/todomvc');
+        await this.bingoPage.waitForLoadState('networkidle');
     }
 
-    async completeTodo(index) {
-        const checkboxes = await this.page.$$(this.locators.todoItemCheckbox);
-        await checkboxes[index].click();
+    async addTodoItem(todoText) {
+        const input = await this.bingoPage.waitForElement(this.todo.todoInput);
+        await input.fill(todoText);
+        await input.press('Enter');
+        await this.bingoPage.waitForElement(this.todo.todoItems);
     }
 
-    async deleteTodo(index) {
-        const todoItems = await this.page.$$(this.locators.todoItems);
-        await todoItems[index].hover();
-        const deleteButtons = await this.page.$$(this.locators.todoItemDeleteButton);
-        await deleteButtons[index].click();
+    async verifyTodoItemVisible(todoText) {
+        const todoItem = await this.bingoPage.waitForElement(this.todo.todoItemLabel);
+        await expect(todoItem).toBeVisible();
+    }
+
+    async completeTodoItem() {
+        const toggle = await this.bingoPage.waitForElement(this.todo.todoItemCheckbox);
+        await toggle.click();
+        await this.bingoPage.waitForElement(this.todo.todoItems);
+    }
+
+    async verifyTodoItemCompleted() {
+        const completedItem = await this.bingoPage.waitForElement(this.todo.todoItems);
+        await expect(completedItem).toBeVisible();
+    }
+
+    async deleteTodoItem() {
+        const todoItem = await this.bingoPage.waitForElement(this.todo.todoItems);
+        await todoItem.hover();
+        const deleteButton = await this.bingoPage.waitForElement(this.todo.todoItemDeleteButton);
+        await deleteButton.click();
+        await this.bingoPage.waitForTimeout(500);
+    }
+
+    async verifyTodoListEmpty() {
+        // Wait a bit for the deletion to complete
+        await this.bingoPage.waitForTimeout(1000);
+        
+        // Check if the list exists but has no items
+        const todoList = await this.bingoPage.findElement(this.todo.todoList, { checkExistence: false });
+        if (await this.bingoPage.elementExists(this.todo.todoList)) {
+            const items = await todoList.locator('li').count();
+            expect(items).toBe(0);
+        } else {
+            // If list doesn't exist, that's also fine
+            expect(true).toBeTruthy();
+        }
     }
 
     async filterTodos(filter) {

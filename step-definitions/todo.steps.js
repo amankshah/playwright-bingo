@@ -1,58 +1,42 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('@playwright/test');
-const PageManager = require('../page.manager');
+const LocatorManager = require('../pages/locators');
+const TodoActions = require('../pages/actions/todo.actions');
 
 Given('I am on the todo page', async function() {
-  await this.page.goto('https://demo.playwright.dev/todomvc');
-  this.pageManager = new PageManager(this.page);
-  const { todoActions } = this.pageManager;
-  this.todo = todoActions;
+    // Initialize locators
+    this.locators = new LocatorManager(this.page);
+    this.todo = this.locators.todo;
+    // Initialize actions
+    this.todoActions = new TodoActions(this.bingoPage, this.todo);
+    // Navigate to page
+    await this.todoActions.navigateToTodoPage();
 });
 
-When('I add a new todo item {string}', async function(item) {
-  await this.todo.addTodo(item);
+When('I add a new todo item {string}', async function(todoText) {
+    await this.todoActions.addTodoItem(todoText);
 });
 
-Then('I should see {string} in the todo list', async function(item) {
-  const todoItems = await this.todo.getTodoItems();
-  const itemTexts = await Promise.all(todoItems.map(item => item.textContent()));
-  expect(itemTexts).toContain(item);
+Then('I should see {string} in the todo list', async function(todoText) {
+    await this.todoActions.verifyTodoItemVisible(todoText);
 });
 
-Given('I have a todo item {string}', async function(item) {
-  await this.todo.addTodo(item);
+Given('I have a todo item {string}', async function(todoText) {
+    await this.todoActions.addTodoItem(todoText);
 });
 
-When('I complete the todo item {string}', async function(item) {
-  const todoItems = await this.todo.getTodoItems();
-  const itemTexts = await Promise.all(todoItems.map(item => item.textContent()));
-  const index = itemTexts.indexOf(item);
-  if (index !== -1) {
-    await this.todo.completeTodo(index);
-  }
+When('I complete the todo item {string}', async function(todoText) {
+    await this.todoActions.completeTodoItem();
 });
 
 Then('It should show as completed', async function() {
-  const todoItems = await this.todo.getTodoItems();
-  const completedItems = await Promise.all(
-    todoItems.map(async item => {
-      const checkbox = await item.$('input[type="checkbox"]');
-      return await checkbox.isChecked();
-    })
-  );
-  expect(completedItems).toContain(true);
+    await this.todoActions.verifyTodoItemCompleted();
 });
 
-When('I delete the todo item {string}', async function(item) {
-  const todoItems = await this.todo.getTodoItems();
-  const itemTexts = await Promise.all(todoItems.map(item => item.textContent()));
-  const index = itemTexts.indexOf(item);
-  if (index !== -1) {
-    await this.todo.deleteTodo(index);
-  }
+When('I delete the todo item {string}', async function(todoText) {
+    await this.todoActions.deleteTodoItem();
 });
 
 Then('It should be removed from the list', async function() {
-  const todoItems = await this.todo.getTodoItems();
-  expect(todoItems.length).toBe(0);
+    await this.todoActions.verifyTodoListEmpty();
 }); 

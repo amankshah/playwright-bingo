@@ -3,8 +3,10 @@ class TodoLocators {
         this.page = page;
         
         // Todo list locators
-        this.todoInput = 'input[placeholder="What needs to be done?"]';
-        this.todoList = '.todo-list';
+        this.todoInput = [
+            'input[placeholder="What needs to be done false?"]', 
+            'input[placeholder="What needs to be done?"]'];
+        this.todoList = ['.todo-lis0', '.todo-list'];
         this.todoItems = '.todo-list li';
         this.todoItemCheckbox = '.todo-list li input[type="checkbox"]';
         this.todoItemLabel = '.todo-list li label';
