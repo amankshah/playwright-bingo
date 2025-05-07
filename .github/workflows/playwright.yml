@@ -39,18 +39,15 @@ jobs:
         sudo tar -zxvf allure-2.24.0.tgz -C /opt/
         sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
     
-    - name: Run Playwright tests
-      run: npm run test:allure
+    - name: Run Cucumber tests
+      run: npm run test
       env:
         # Secrets (sensitive data)
         TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
         TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         BINGO_MASK_SALT: ${{ secrets.BINGO_MASK_SALT }}
         
-        # Environment Variables (non-sensitive data)
-        BASE_URL: ${{ vars.BASE_URL }}
-        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-        DEBUG: ${{ vars.DEBUG }}
+       
     
     - name: Generate Allure Report
       if: always()
