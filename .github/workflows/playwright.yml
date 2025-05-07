@@ -39,12 +39,16 @@ jobs:
         sudo tar -zxvf allure-2.24.0.tgz -C /opt/
         sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
     
-    - name: Debug env
+    - name: Check if secrets are set
       run: |
-        echo "TEST_EMAIL is set: [${{ secrets.TEST_EMAIL != '' }}]"
-        echo "TEST_PASSWORD is set: [${{ secrets.TEST_PASSWORD != '' }}]"
-        echo "BINGO_MASK_SALT is set: [${{ secrets.BINGO_MASK_SALT != '' }}]"
-    
+        if [ -n "$TEST_EMAIL" ]; then echo "TEST_EMAIL is set: [true]"; else echo "TEST_EMAIL is set: [false]"; fi
+        if [ -n "$TEST_PASSWORD" ]; then echo "TEST_PASSWORD is set: [true]"; else echo "TEST_PASSWORD is set: [false]"; fi
+        if [ -n "$BINGO_MASK_SALT" ]; then echo "BINGO_MASK_SALT is set: [true]"; else echo "BINGO_MASK_SALT is set: [false]"; fi
+      env:
+        TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        BINGO_MASK_SALT: ${{ secrets.BINGO_MASK_SALT }}
+
     - name: Run Cucumber tests
       run: npm run test
       env:
