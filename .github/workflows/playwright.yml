@@ -1,0 +1,78 @@
+name: Playwright and Cucumber Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        browser: [chromium]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps ${{ matrix.browser }}
+    
+    - name: Run Playwright tests
+      run: npx playwright test
+      env:
+        CI: true
+        PLAYWRIGHT_HEADLESS: true
+    
+    - name: Upload Playwright results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: playwright-report/
+        retention-days: 30
+
+  cucumber:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+    
+    - name: Run Cucumber tests
+      run: npm run test
+      env:
+        CI: true
+        PLAYWRIGHT_HEADLESS: true
+    
+    - name: Generate Allure report
+      run: npm run test:allure
+    
+    - name: Upload Cucumber results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cucumber-results
+        path: allure-report/
+        retention-days: 30
