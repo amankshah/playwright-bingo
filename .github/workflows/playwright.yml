@@ -42,12 +42,9 @@ jobs:
     - name: Run Cucumber tests
       run: npm run test
       env:
-        # Secrets (sensitive data)
         TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
         TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
         BINGO_MASK_SALT: ${{ secrets.BINGO_MASK_SALT }}
-        
-       
     
     - name: Generate Allure Report
       if: always()
