@@ -1,0 +1,25 @@
+{
+  "name": "playwright-bingo-project",
+  "version": "1.0.0",
+  "description": "Playwright Bingo Test Framework Project",
+  "scripts": {
+    "test": "cucumber-js",
+    "test:parallel": "cucumber-js --parallel 2",
+    "test:report": "node generate-report.js"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.0.1",
+    "@playwright/test": "^1.40.0",
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.3.1",
+    "fs-extra": "^11.1.1",
+    "module-alias": "^2.2.3",
+    "playwright-bingo": "^1.0.2"
+  },
+  "_moduleAliases": {
+    "@bingo": "lib",
+    "@playwright-bingo": "."
+  }
+} 

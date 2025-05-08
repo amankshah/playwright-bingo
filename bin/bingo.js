@@ -62,6 +62,7 @@ function addPage(pageName) {
   const stepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${pageName}.steps.js`);
   const actionsIndexPath = path.join(projectRoot, 'pages', 'actions', 'index.js');
   const locatorsIndexPath = path.join(projectRoot, 'pages', 'locators', 'index.js');
+  const pageManagerPath = path.join(projectRoot, 'page.manager.js');
 
   if (fs.existsSync(actionsPath) || fs.existsSync(locatorsPath) || fs.existsSync(stepsPath)) {
     console.error('Page already exists.');
@@ -161,8 +162,32 @@ Given('I am on the ${pageName} page', async function() {
     fs.writeFileSync(locatorsIndexPath, `const ${locatorClassName} = require('./${pageName}.locators');\n\nclass LocatorManager {\n    constructor(page) {\n        this.page = page;\n        this.${pageName} = new ${locatorClassName}(page);\n    }\n\n    getAllLocators() {\n        return {\n            ${pageName}: this.${pageName}\n        };\n    }\n}\n\nmodule.exports = LocatorManager;`);
   }
 
+  // Update page.manager.js
+  if (fs.existsSync(pageManagerPath)) {
+    let pageManagerContent = fs.readFileSync(pageManagerPath, 'utf8');
+    
+    // Add require statement
+    if (!pageManagerContent.includes(`const ${className}`)) {
+      pageManagerContent = pageManagerContent.replace(
+        'const TodoActions = require',
+        `const TodoActions = require('./pages/actions/todo.actions');\nconst ${className} = require('./pages/actions/${pageName}.actions');`
+      );
+    }
+
+    // Add to _initializePages
+    if (!pageManagerContent.includes(`this.${pageName}`)) {
+      pageManagerContent = pageManagerContent.replace(
+        '_initializePages() {',
+        `_initializePages() {\n        this.${pageName} = new ${className}(this.page);`
+      );
+    }
+
+    fs.writeFileSync(pageManagerPath, pageManagerContent);
+  }
+
   console.log(`Page '${pageName}' created with actions, locators, and step definitions.`);
   console.log('Updated index files in actions and locators directories.');
+  console.log('Updated page.manager.js with new page.');
 }
 
 function deletePage(pageName) {
@@ -170,6 +195,9 @@ function deletePage(pageName) {
   const actionsPath = path.join(projectRoot, 'pages', 'actions', `${pageName}.actions.js`);
   const locatorsPath = path.join(projectRoot, 'pages', 'locators', `${pageName}.locators.js`);
   const stepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${pageName}.steps.js`);
+  const pageManagerPath = path.join(projectRoot, 'page.manager.js');
+  const actionsIndexPath = path.join(projectRoot, 'pages', 'actions', 'index.js');
+  const locatorsIndexPath = path.join(projectRoot, 'pages', 'locators', 'index.js');
 
   let deleted = false;
   if (fs.existsSync(actionsPath)) {
@@ -184,8 +212,77 @@ function deletePage(pageName) {
     fs.unlinkSync(stepsPath);
     deleted = true;
   }
+
+  // Update page.manager.js
+  if (fs.existsSync(pageManagerPath)) {
+    let pageManagerContent = fs.readFileSync(pageManagerPath, 'utf8');
+    const className = capitalize(pageName) + 'Actions';
+
+    // Remove require statement
+    pageManagerContent = pageManagerContent.replace(
+      new RegExp(`const ${className} = require\\(['"].*['"]\\);\\n?`, 'g'),
+      ''
+    );
+
+    // Remove from _initializePages
+    pageManagerContent = pageManagerContent.replace(
+      new RegExp(`\\s+this\\.${pageName} = new ${className}\\(this\\.page\\);\\n?`, 'g'),
+      ''
+    );
+
+    fs.writeFileSync(pageManagerPath, pageManagerContent);
+  }
+
+  // Update actions/index.js
+  if (fs.existsSync(actionsIndexPath)) {
+    let actionsIndexContent = fs.readFileSync(actionsIndexPath, 'utf8');
+    const className = capitalize(pageName) + 'Actions';
+
+    // Remove require statement
+    actionsIndexContent = actionsIndexContent.replace(
+      new RegExp(`const ${className} = require\\(['"].*['"]\\);\\n?`, 'g'),
+      ''
+    );
+
+    // Remove from exports
+    actionsIndexContent = actionsIndexContent.replace(
+      new RegExp(`\\s+${className},?\\n?`, 'g'),
+      ''
+    );
+
+    fs.writeFileSync(actionsIndexPath, actionsIndexContent);
+  }
+
+  // Update locators/index.js
+  if (fs.existsSync(locatorsIndexPath)) {
+    let locatorsIndexContent = fs.readFileSync(locatorsIndexPath, 'utf8');
+    const className = capitalize(pageName) + 'Locators';
+
+    // Remove require statement
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`const ${className} = require\\(['"].*['"]\\);\\n?`, 'g'),
+      ''
+    );
+
+    // Remove from constructor
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`\\s+this\\.${pageName} = new ${className}\\(page\\);\\n?`, 'g'),
+      ''
+    );
+
+    // Remove from getAllLocators
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`\\s+${pageName}: this\\.${pageName},?\\n?`, 'g'),
+      ''
+    );
+
+    fs.writeFileSync(locatorsIndexPath, locatorsIndexContent);
+  }
+
   if (deleted) {
     console.log(`Page '${pageName}' deleted.`);
+    console.log('Updated page.manager.js to remove page references.');
+    console.log('Updated actions and locators index files.');
   } else {
     console.error('Page does not exist.');
     process.exit(1);
@@ -197,6 +294,9 @@ function updatePage(oldPageName, newPageName) {
   const oldActionsPath = path.join(projectRoot, 'pages', 'actions', `${oldPageName}.actions.js`);
   const oldLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${oldPageName}.locators.js`);
   const oldStepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${oldPageName}.steps.js`);
+  const pageManagerPath = path.join(projectRoot, 'page.manager.js');
+  const actionsIndexPath = path.join(projectRoot, 'pages', 'actions', 'index.js');
+  const locatorsIndexPath = path.join(projectRoot, 'pages', 'locators', 'index.js');
   
   const newActionsPath = path.join(projectRoot, 'pages', 'actions', `${newPageName}.actions.js`);
   const newLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${newPageName}.locators.js`);
@@ -240,7 +340,78 @@ function updatePage(oldPageName, newPageName) {
   fs.unlinkSync(oldLocatorsPath);
   fs.unlinkSync(oldStepsPath);
 
+  // Update page.manager.js
+  if (fs.existsSync(pageManagerPath)) {
+    let pageManagerContent = fs.readFileSync(pageManagerPath, 'utf8');
+    const oldClassName = capitalize(oldPageName) + 'Actions';
+    const newClassName = capitalize(newPageName) + 'Actions';
+
+    // Update require statement
+    pageManagerContent = pageManagerContent.replace(
+      new RegExp(`const ${oldClassName} = require\\(['"].*['"]\\);`, 'g'),
+      `const ${newClassName} = require('./pages/actions/${newPageName}.actions');`
+    );
+
+    // Update in _initializePages
+    pageManagerContent = pageManagerContent.replace(
+      new RegExp(`this\\.${oldPageName} = new ${oldClassName}\\(this\\.page\\);`, 'g'),
+      `this.${newPageName} = new ${newClassName}(this.page);`
+    );
+
+    fs.writeFileSync(pageManagerPath, pageManagerContent);
+  }
+
+  // Update actions/index.js
+  if (fs.existsSync(actionsIndexPath)) {
+    let actionsIndexContent = fs.readFileSync(actionsIndexPath, 'utf8');
+    const oldClassName = capitalize(oldPageName) + 'Actions';
+    const newClassName = capitalize(newPageName) + 'Actions';
+
+    // Update require statement
+    actionsIndexContent = actionsIndexContent.replace(
+      new RegExp(`const ${oldClassName} = require\\(['"].*['"]\\);`, 'g'),
+      `const ${newClassName} = require('./${newPageName}.actions');`
+    );
+
+    // Update exports
+    actionsIndexContent = actionsIndexContent.replace(
+      new RegExp(`${oldClassName},?`, 'g'),
+      `${newClassName},`
+    );
+
+    fs.writeFileSync(actionsIndexPath, actionsIndexContent);
+  }
+
+  // Update locators/index.js
+  if (fs.existsSync(locatorsIndexPath)) {
+    let locatorsIndexContent = fs.readFileSync(locatorsIndexPath, 'utf8');
+    const oldClassName = capitalize(oldPageName) + 'Locators';
+    const newClassName = capitalize(newPageName) + 'Locators';
+
+    // Update require statement
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`const ${oldClassName} = require\\(['"].*['"]\\);`, 'g'),
+      `const ${newClassName} = require('./${newPageName}.locators');`
+    );
+
+    // Update constructor
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`this\\.${oldPageName} = new ${oldClassName}\\(page\\);`, 'g'),
+      `this.${newPageName} = new ${newClassName}(page);`
+    );
+
+    // Update getAllLocators
+    locatorsIndexContent = locatorsIndexContent.replace(
+      new RegExp(`${oldPageName}: this\\.${oldPageName},?`, 'g'),
+      `${newPageName}: this.${newPageName},`
+    );
+
+    fs.writeFileSync(locatorsIndexPath, locatorsIndexContent);
+  }
+
   console.log(`Page '${oldPageName}' updated to '${newPageName}'.`);
+  console.log('Updated page.manager.js with new page name.');
+  console.log('Updated actions and locators index files.');
 }
 
 function handleMaskData(value) {

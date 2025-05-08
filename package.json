@@ -36,6 +36,7 @@
     "addPage":"bingo add page login",
     "deletePage":"bingo delete page login",
     "updatePage":"bingo update page login newPage",
+    "deleteNewPage":"bingo delete page newPage",
     "test:parallel": "cucumber-js --parallel 2",
     "test:report": "node generate-report.js",
     "prepublishOnly": "npm test"
