@@ -92,13 +92,38 @@ bingo unmask <maskedData>
 
 ```
 playwright-bingo/
-├── features/              # Cucumber feature files
-├── pages/                 # Page objects
-│   ├── actions/          # Page actions
-│   └── locators/         # Page locators
-├── step-definitions/     # Cucumber step definitions
-├── support/              # Support files
-└── tests/                # Test files
+├── features/                    # Cucumber feature files
+│   └── todo.feature            # Example Todo feature file
+├── lib/                        # Core framework files
+│   ├── index.js               # Main framework exports
+│   ├── locators.js            # Locator management
+│   ├── page.manager.js        # Page object management
+│   └── utils/                 # Utility functions
+│       ├── data-masker.js     # Data masking utilities
+│       └── properties.js      # Properties file handling
+├── pages/                      # Page objects
+│   ├── actions/               # Page actions
+│   │   ├── index.js          # Actions exports
+│   │   └── todo.actions.js   # Todo page actions
+│   └── locators/             # Page locators
+│       ├── index.js          # Locators exports
+│       └── todo.locators.js  # Todo page locators
+├── step-definitions/          # Cucumber step definitions
+│   └── todo.steps.js         # Todo feature steps
+├── support/                   # Support files
+│   ├── env-setup.js          # Environment configuration
+│   ├── hooks.js              # Cucumber hooks
+│   └── world.js              # Custom world setup
+├── tests/                     # Test files
+│   └── todo.test.js          # Example test file
+├── .env                      # Environment variables
+├── .gitignore                # Git ignore file
+├── bingo.config.js           # Framework configuration
+├── cucumber.js               # Cucumber configuration
+├── generate-report.js        # HTML report generation
+├── jsconfig.json             # JavaScript configuration
+├── package.json              # Project dependencies
+└── README.md                 # Project documentation
 ```
 
 ## ⚙️ Configuration
