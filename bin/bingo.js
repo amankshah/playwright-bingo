@@ -59,19 +59,23 @@ function addPage(pageName) {
   const locatorClassName = capitalize(pageName) + 'Locators';
   const actionsPath = path.join(projectRoot, 'pages', 'actions', `${pageName}.actions.js`);
   const locatorsPath = path.join(projectRoot, 'pages', 'locators', `${pageName}.locators.js`);
-  const stepsPath = path.join(projectRoot, 'step-definitions', `${pageName}.steps.js`);
+  const stepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${pageName}.steps.js`);
+  const actionsIndexPath = path.join(projectRoot, 'pages', 'actions', 'index.js');
+  const locatorsIndexPath = path.join(projectRoot, 'pages', 'locators', 'index.js');
 
   if (fs.existsSync(actionsPath) || fs.existsSync(locatorsPath) || fs.existsSync(stepsPath)) {
     console.error('Page already exists.');
     process.exit(1);
   }
 
-  const actionsContent = `const ${locatorClassName} = require('../locators/${pageName}.locators');
+  const actionsContent = `const { expect } = require('@playwright/test');
+const LocatorManager = require('../locators');
 
 class ${className} {
-    constructor(page) {
-        this.page = page;
-        this.locators = new ${locatorClassName}(page);
+    constructor(bingoPage) {
+        this.bingoPage = bingoPage;
+        const locatorManager = new LocatorManager(bingoPage.page);
+        this.${pageName} = locatorManager.${pageName};
     }
     // Add your page actions here
 }
@@ -91,20 +95,19 @@ module.exports = ${locatorClassName};
 
   const stepsContent = `const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('@playwright/test');
-const PageManager = require('../page.manager');
+const { LocatorManager, PageManager, env, debug } = require('playwright-bingo');
 
 Given('I am on the ${pageName} page', async function() {
-  // TODO: Update the URL for your page
-  await this.page.goto('https://your-page-url.com');
-  this.pageManager = new PageManager(this.page);
-  const { ${pageName}Actions } = this.pageManager;
-  this.${pageName} = ${pageName}Actions;
+    // Initialize page manager
+    this.pageManager = new PageManager(this.bingoPage);
+    // Navigate to page
+    await this.pageManager.${pageName}.navigateTo${capitalize(pageName)}Page();
 });
 
 // Add your step definitions here
 // Example:
 // When('I perform some action', async function() {
-//   await this.${pageName}.someAction();
+//   await this.pageManager.${pageName}.someAction();
 // });
 `;
 
@@ -113,17 +116,60 @@ Given('I am on the ${pageName} page', async function() {
   fs.mkdirSync(path.dirname(locatorsPath), { recursive: true });
   fs.mkdirSync(path.dirname(stepsPath), { recursive: true });
 
+  // Create the files
   fs.writeFileSync(actionsPath, actionsContent);
   fs.writeFileSync(locatorsPath, locatorsContent);
   fs.writeFileSync(stepsPath, stepsContent);
+
+  // Update actions index.js
+  if (fs.existsSync(actionsIndexPath)) {
+    let actionsIndexContent = fs.readFileSync(actionsIndexPath, 'utf8');
+    if (!actionsIndexContent.includes(`const ${className}`)) {
+      actionsIndexContent = actionsIndexContent.replace(
+        'module.exports = {',
+        `const ${className} = require('./${pageName}.actions');\n\nmodule.exports = {`
+      );
+      actionsIndexContent = actionsIndexContent.replace(
+        '};',
+        `    ${className},\n};`
+      );
+      fs.writeFileSync(actionsIndexPath, actionsIndexContent);
+    }
+  } else {
+    fs.writeFileSync(actionsIndexPath, `const ${className} = require('./${pageName}.actions');\n\nmodule.exports = {\n    ${className}\n};`);
+  }
+
+  // Update locators index.js
+  if (fs.existsSync(locatorsIndexPath)) {
+    let locatorsIndexContent = fs.readFileSync(locatorsIndexPath, 'utf8');
+    if (!locatorsIndexContent.includes(`const ${locatorClassName}`)) {
+      locatorsIndexContent = locatorsIndexContent.replace(
+        'class LocatorManager {',
+        `const ${locatorClassName} = require('./${pageName}.locators');\n\nclass LocatorManager {`
+      );
+      locatorsIndexContent = locatorsIndexContent.replace(
+        'constructor(page) {',
+        `constructor(page) {\n        this.${pageName} = new ${locatorClassName}(page);`
+      );
+      locatorsIndexContent = locatorsIndexContent.replace(
+        'getAllLocators() {',
+        `getAllLocators() {\n        return {\n            ${pageName}: this.${pageName},\n            ...this.getAllLocators()\n        };`
+      );
+      fs.writeFileSync(locatorsIndexPath, locatorsIndexContent);
+    }
+  } else {
+    fs.writeFileSync(locatorsIndexPath, `const ${locatorClassName} = require('./${pageName}.locators');\n\nclass LocatorManager {\n    constructor(page) {\n        this.page = page;\n        this.${pageName} = new ${locatorClassName}(page);\n    }\n\n    getAllLocators() {\n        return {\n            ${pageName}: this.${pageName}\n        };\n    }\n}\n\nmodule.exports = LocatorManager;`);
+  }
+
   console.log(`Page '${pageName}' created with actions, locators, and step definitions.`);
+  console.log('Updated index files in actions and locators directories.');
 }
 
 function deletePage(pageName) {
   const projectRoot = getProjectRoot();
   const actionsPath = path.join(projectRoot, 'pages', 'actions', `${pageName}.actions.js`);
   const locatorsPath = path.join(projectRoot, 'pages', 'locators', `${pageName}.locators.js`);
-  const stepsPath = path.join(projectRoot, 'step-definitions', `${pageName}.steps.js`);
+  const stepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${pageName}.steps.js`);
 
   let deleted = false;
   if (fs.existsSync(actionsPath)) {
@@ -150,11 +196,11 @@ function updatePage(oldPageName, newPageName) {
   const projectRoot = getProjectRoot();
   const oldActionsPath = path.join(projectRoot, 'pages', 'actions', `${oldPageName}.actions.js`);
   const oldLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${oldPageName}.locators.js`);
-  const oldStepsPath = path.join(projectRoot, 'step-definitions', `${oldPageName}.steps.js`);
+  const oldStepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${oldPageName}.steps.js`);
   
   const newActionsPath = path.join(projectRoot, 'pages', 'actions', `${newPageName}.actions.js`);
   const newLocatorsPath = path.join(projectRoot, 'pages', 'locators', `${newPageName}.locators.js`);
-  const newStepsPath = path.join(projectRoot, 'step-definitions', `${newPageName}.steps.js`);
+  const newStepsPath = path.join(projectRoot, 'tests', 'step-definitions', `${newPageName}.steps.js`);
 
   // Check if old files exist
   if (!fs.existsSync(oldActionsPath) || !fs.existsSync(oldLocatorsPath) || !fs.existsSync(oldStepsPath)) {
