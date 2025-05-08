@@ -81,6 +81,49 @@ const { env } = require('./lib/mask');
 console.log(env.TEST_EMAIL);  // Shows original value
 ```
 
+### Properties File Masking
+
+The framework can automatically mask sensitive values in `.properties` files:
+
+1. Configure masking in `bingo.config.js`:
+```javascript
+module.exports = {
+    dataMasking: {
+        enabled: true,
+        properties: {
+            autoMask: true,
+            sensitiveKeys: [
+                'password',
+                'secret',
+                'key',
+                'token',
+                'credential',
+                'apiKey',
+                'auth',
+                'private'
+            ]
+        }
+    }
+};
+```
+
+2. Use the Properties class to handle masked values:
+```javascript
+const { properties } = require('./lib');
+
+// Load properties with automatic masking
+properties.load('path/to/properties.file', true);
+
+// Get masked value
+const maskedValue = properties.get('db.password');
+
+// Get original value
+const originalValue = properties.get('db.password', true);
+
+// Save masked properties to a new file
+properties.save('path/to/masked.properties', true);
+```
+
 ### Automatic Masking
 
 The system automatically detects and masks sensitive data types:
@@ -92,6 +135,7 @@ The system automatically detects and masks sensitive data types:
 - Passwords
 - Database credentials
 - JWT tokens
+- Properties file values containing sensitive keys
 
 ### Debugging
 
