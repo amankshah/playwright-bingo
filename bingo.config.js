@@ -26,5 +26,22 @@ module.exports = {
             enabled: true,
             retainOnFailure: true,
         }
+    },
+    // Data masking configuration
+    dataMasking: {
+        enabled: true, // Enable/disable automatic masking of sensitive data
+        properties: {
+            autoMask: true,  // Enable automatic masking for properties
+            sensitiveKeys: [ // Keys that should be considered sensitive
+                'password',
+                'secret',
+                'key',
+                'token',
+                'credential',
+                'apiKey',
+                'auth',
+                'private'
+            ]
+        }
     }
 }; 

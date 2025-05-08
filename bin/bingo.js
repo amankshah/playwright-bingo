@@ -10,9 +10,21 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config();
 
-// Ensure we have a salt
+// Security check for BINGO_MASK_SALT
 if (!process.env.BINGO_MASK_SALT) {
-    console.warn('⚠️  Warning: BINGO_MASK_SALT not found in environment variables. Using default salt.');
+    console.error('❌ Error: BINGO_MASK_SALT environment variable is not set.');
+    console.error('This is required for secure data masking.');
+    console.error('\nPlease set it in your .env file:');
+    console.error('BINGO_MASK_SALT=your-secure-random-salt');
+    console.error('\nOr set it as an environment variable:');
+    console.error('export BINGO_MASK_SALT=your-secure-random-salt');
+    process.exit(1);
+}
+
+// Validate salt strength
+if (process.env.BINGO_MASK_SALT.length < 32) {
+    console.warn('⚠️  Warning: BINGO_MASK_SALT should be at least 32 characters long for better security.');
+    console.warn('Consider using a longer, more random salt.');
 }
 
 const [,, cmd, type, oldName, newName] = process.argv;
