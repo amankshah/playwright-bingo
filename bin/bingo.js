@@ -6,6 +6,10 @@ const { program } = require('commander');
 const { initializeProject } = require('./init');
 const { mask: maskData, env, getOriginalValue } = require('../lib/mask');
 const dotenv = require('dotenv');
+const fsExtra = require('fs-extra');
+const chalk = require('chalk');
+const { execSync } = require('child_process');
+const crypto = require('crypto');
 
 // Load environment variables
 dotenv.config();
@@ -218,16 +222,64 @@ function handleMaskData(value) {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 }
 
+// Function to generate random salt
+function generateRandomSalt(length = 64) {
+    return crypto.randomBytes(length).toString('hex');
+}
+
 program
     .name('bingo')
     .description('CLI for Playwright Bingo framework')
-    .version('1.0.0');
+    .version('1.0.2');
 
 program
     .command('init')
     .description('Initialize a new Playwright Bingo project')
-    .action(() => {
-        initializeProject();
+    .action(async () => {
+        try {
+            const templateDir = path.join(__dirname, '../templates');
+            const currentDir = process.cwd();
+
+            console.log(chalk.blue('🚀 Initializing Playwright Bingo project...'));
+
+            // Copy all template files
+            await fsExtra.copy(templateDir, currentDir);
+
+            // Create bingo.config.js if it doesn't exist
+            const configPath = path.join(currentDir, 'bingo.config.js');
+            if (!fs.existsSync(configPath)) {
+                await fsExtra.copy(
+                    path.join(templateDir, 'bingo.config.js'),
+                    configPath
+                );
+            }
+
+            // Create .env file with random salt
+            const envPath = path.join(currentDir, '.env');
+            const randomSalt = generateRandomSalt();
+            await fs.writeFile(envPath, `BINGO_MASK_SALT=${randomSalt}\n`);
+
+            console.log(chalk.green('✓ Project files created successfully!'));
+
+            // Install dependencies
+            console.log(chalk.blue('\n📦 Installing dependencies...'));
+            execSync('npm install', { stdio: 'inherit' });
+
+            // Install Playwright browsers
+            console.log(chalk.blue('\n🌐 Installing Playwright browsers...'));
+            execSync('npx playwright install', { stdio: 'inherit' });
+
+            console.log(chalk.green('\n✨ Project setup completed successfully!'));
+            console.log(chalk.yellow('\n🎯 Next steps:'));
+            console.log('1. Review your .env file for the generated BINGO_MASK_SALT');
+            console.log('2. Start writing your tests in the features directory');
+            console.log('3. Run your tests with: npm test');
+            console.log('\n🎮 Happy and Easy testing with Bingo! 🎲');
+            console.log(chalk.cyan('   Documentation: https://playwright-bingo.netlify.app/'));
+        } catch (error) {
+            console.error(chalk.red('❌ Error initializing project:'), error);
+            process.exit(1);
+        }
     });
 
 program
@@ -309,4 +361,4 @@ program
         }
     });
 
-program.parse(); 
+program.parse(process.argv); 

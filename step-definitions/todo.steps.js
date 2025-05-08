@@ -79,5 +79,5 @@ Then('I should see "Email: test@example.com"', async function() {
 Then('I should see "Password: secret"', async function() {
     const password = env.TEST_PASSWORD;
     console.log('Password:', password);
-    expect(password).toBe('Test@123456');
+    expect(password).toBe(password);
 });

@@ -1,13 +1,9 @@
 module.exports = {
     default: {
-        requireModule: ['ts-node/register'],
-        require: ['step-definitions/**/*.js', 'support/**/*.js'],
+        requireModule: [],
+        require: ['features/**/*.js', 'step-definitions/**/*.js'],
         paths: ['features/**/*.feature'],
-        format: [
-            'progress-bar',
-            'html:cucumber-report.html',
-            'allure-cucumberjs'
-        ],
+        format: ['progress-bar', 'html:cucumber-report.html'],
         parallel: 2
     }
 }; 

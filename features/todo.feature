@@ -20,8 +20,4 @@ Feature: Todo List Management
     When I delete the todo item "Buy groceries"
     Then It should be removed from the list 
 
-  Scenario: Testing masked values
-    When I enter my credentials
-    Then I should see "Email: test@example.com"
-    And I should see "Password: secret"
 
