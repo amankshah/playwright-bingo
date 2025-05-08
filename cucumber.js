@@ -1,10 +1,10 @@
 module.exports = {
     default: {
-        require: ['step-definitions/**/*.js', 'support/**/*.js'],
-        paths: ['features/**/*.feature'],
+        require: ['tests/step-definitions/**/*.js', 'tests/support/**/*.js'],
+        paths: ['tests/features/**/*.feature'],
         format: [
             'progress-bar',
-            ['html', 'cucumber-report.html']
+            ['html', 'reports/cucumber-report.html']
         ],
         formatOptions: { 
             snippetInterface: 'async-await'

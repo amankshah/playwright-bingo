@@ -1,5 +1,5 @@
 const { setWorldConstructor } = require('@cucumber/cucumber');
-const { BingoPage } = require('../lib/index');
+const { BingoPage } = require('../../lib/index');
 
 class CustomWorld {
   constructor() {

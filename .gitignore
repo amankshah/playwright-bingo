@@ -5,4 +5,4 @@ node_modules/
 /playwright/.cache/
 /allure-results/
 /allure-report/
-cucumber-report.html
+/reports/

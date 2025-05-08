@@ -1,17 +1,9 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('@playwright/test');
-const LocatorManager = require('../pages/locators');
-const TodoActions = require('../pages/actions/todo.actions');
-const { env, debug } = require('../lib/mask');
+const LocatorManager = require('../../pages/locators');
+const TodoActions = require('../../pages/actions/todo.actions');
+const { env, debug } = require('../../lib/mask');
 
-// Debug environment variables
-console.log('\n🔍 Environment Check in Steps:');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('process.env.TEST_EMAIL:', process.env.TEST_EMAIL);
-console.log('process.env.TEST_PASSWORD:', process.env.TEST_PASSWORD);
-console.log('env.TEST_EMAIL:', env.TEST_EMAIL);
-console.log('env.TEST_PASSWORD:', env.TEST_PASSWORD);
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
 Given('I am on the todo page', async function() {
     // Initialize actions
