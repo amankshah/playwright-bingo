@@ -1,6 +1,6 @@
-# Playwright Bingo
+# Playwright Bingo Framework
 
-A powerful testing framework built on top of Playwright and Cucumber, designed to make end-to-end testing more efficient and maintainable.
+A powerful and user-friendly test automation framework built on Playwright and Cucumber.js, designed to make test automation easy and efficient.
 
 [![Documentation](https://img.shields.io/badge/Documentation-Playwright%20Bingo-blue)](https://playwright-bingo.netlify.app/)
 [![npm version](https://img.shields.io/npm/v/playwright-bingo)](https://www.npmjs.com/package/playwright-bingo)
@@ -21,35 +21,161 @@ Visit our [official documentation site](https://playwright-bingo.netlify.app/) f
 
 > 💡 **Pro Tip**: Bookmark the [documentation site](https://playwright-bingo.netlify.app/) for quick reference while working with Playwright Bingo.
 
-## Features
+## 🚀 Features
 
-- 🎯 **Page Object Model**: Organized structure for better test maintenance
-- 🔄 **Cucumber Integration**: BDD-style test writing with Gherkin syntax
-- 🎨 **Modern UI Testing**: Built on Playwright for reliable cross-browser testing
-- 🔒 **Data Masking**: Built-in support for masking sensitive data
-- 🛠️ **CLI Tools**: Easy project management and test creation
-- 🔄 **Self-Healing Locators**: Automatic recovery from locator failures
+- **Page Object Model**: Clean and maintainable test structure
+- **Self-healing Locators**: Automatic retry mechanism for flaky elements
+- **Data Masking**: Secure handling of sensitive test data
+- **Parallel Execution**: Run tests in parallel for faster execution
+- **HTML Reports**: Beautiful and detailed test reports
+- **CLI Tools**: Easy-to-use commands for project management
+- **Cucumber Integration**: BDD-style test writing with Gherkin syntax
+- **Modern UI Testing**: Built on Playwright for reliable cross-browser testing
 
-## Installation
+## 📦 Installation
 
+1. Install the framework globally:
 ```bash
-npm install playwright-bingo
+npm install -g playwright-bingo
 ```
 
-## Project Structure
+2. Create a new project:
+```bash
+bingo init
+```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Install Playwright browsers:
+```bash
+npx playwright install
+```
+
+## 🎮 Usage
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in parallel
+npm run test:parallel
+
+# Generate HTML report
+npm run test:report
+```
+
+### CLI Commands
+
+```bash
+# Add a new page
+bingo add page <pageName>
+
+# Delete a page
+bingo delete page <pageName>
+
+# Update page name
+bingo update page <oldName> <newName>
+
+# Mask sensitive data
+bingo mask <data>
+
+# Unmask data
+bingo unmask <maskedData>
+```
+
+## 📁 Project Structure
 
 ```
 playwright-bingo/
-├── features/              # Cucumber feature files
-├── pages/                 # Page objects
-│   ├── actions/          # Page actions
-│   └── locators/         # Page locators
-├── step-definitions/     # Cucumber step definitions
-├── support/              # Support files
-└── tests/                # Test files
+├── features/                    # Cucumber feature files
+│   └── todo.feature            # Example Todo feature file
+├── lib/                        # Core framework files
+│   ├── index.js               # Main framework exports
+│   ├── locators.js            # Locator management
+│   ├── page.manager.js        # Page object management
+│   └── utils/                 # Utility functions
+│       ├── data-masker.js     # Data masking utilities
+│       └── properties.js      # Properties file handling
+├── pages/                      # Page objects
+│   ├── actions/               # Page actions
+│   │   ├── index.js          # Actions exports
+│   │   └── todo.actions.js   # Todo page actions
+│   └── locators/             # Page locators
+│       ├── index.js          # Locators exports
+│       └── todo.locators.js  # Todo page locators
+├── step-definitions/          # Cucumber step definitions
+│   └── todo.steps.js         # Todo feature steps
+├── support/                   # Support files
+│   ├── env-setup.js          # Environment configuration
+│   ├── hooks.js              # Cucumber hooks
+│   └── world.js              # Custom world setup
+├── tests/                     # Test files
+│   └── todo.test.js          # Example test file
+├── .env                      # Environment variables
+├── .gitignore                # Git ignore file
+├── bingo.config.js           # Framework configuration
+├── cucumber.js               # Cucumber configuration
+├── generate-report.js        # HTML report generation
+├── jsconfig.json             # JavaScript configuration
+├── package.json              # Project dependencies
+└── README.md                 # Project documentation
 ```
 
-## Data Masking
+## ⚙️ Configuration
+
+### bingo.config.js
+
+```javascript
+module.exports = {
+    selfHealing: {
+        enabled: true,
+        maxTimeout: 5000,
+        retryInterval: 1000,
+        maxRetries: 3
+    },
+    locators: {
+        defaultTimeout: 30000,
+        waitForTimeout: 5000
+    },
+    browser: {
+        headless: true,
+        slowMo: 50
+    },
+    reporting: {
+        screenshots: {
+            onFailure: true,
+            onSuccess: false
+        },
+        videos: {
+            enabled: true,
+            retainOnFailure: true
+        }
+    },
+    dataMasking: {
+        enabled: true,
+        properties: {
+            autoMask: true,
+            sensitiveKeys: [
+                'password',
+                'secret',
+                'key',
+                'token',
+                'credential',
+                'apiKey',
+                'auth',
+                'private'
+            ]
+        }
+    }
+};
+```
+
+## 🔒 Data Masking
 
 The framework includes a powerful data masking system to protect sensitive information in your tests.
 
@@ -75,7 +201,7 @@ TEST_EMAIL=BINGO_MASK_<hash>
 ### Using Masked Values
 
 ```javascript
-const { env } = require('./lib/mask');
+const { env } = require('playwright-bingo');
 
 // Access environment variables (automatically decrypted)
 console.log(env.TEST_EMAIL);  // Shows original value
@@ -109,7 +235,7 @@ module.exports = {
 
 2. Use the Properties class to handle masked values:
 ```javascript
-const { properties } = require('./lib');
+const { properties } = require('playwright-bingo');
 
 // Load properties with automatic masking
 properties.load('path/to/properties.file', true);
@@ -140,13 +266,13 @@ The system automatically detects and masks sensitive data types:
 ### Debugging
 
 ```javascript
-const { debug } = require('./lib/mask');
+const { debug } = require('playwright-bingo');
 
 // Show all masked values and their originals
 debug();
 ```
 
-## Self-Healing Locators
+## 🔄 Self-Healing Locators
 
 The framework includes a powerful self-healing mechanism that automatically recovers from locator failures by trying alternative locators.
 
@@ -186,113 +312,25 @@ class TodoActions {
 }
 ```
 
-### Configuration
+## 📊 Reports
 
-Create a `bingo.config.js` file in your project root to customize self-healing behavior:
+HTML reports are generated automatically after test execution:
 
-```javascript
-module.exports = {
-    selfHealing: {
-        maxTimeout: 30000,    // Maximum time to wait for element (ms)
-        retryInterval: 1000,  // Time between retries (ms)
-        maxRetries: 3         // Maximum number of retry attempts
-    }
-};
-```
-
-### Best Practices for Self-Healing
-
-1. **Locator Priority**
-   - Order locators from most specific to least specific
-   - Use data-testid attributes as primary locators
-   - Include fallback locators for different page states
-
-2. **Performance**
-   - Limit the number of alternative locators
-   - Use appropriate timeouts for your application
-   - Consider using different configurations for different environments
-
-3. **Maintenance**
-   - Regularly review and update locators
-   - Remove obsolete locators
-   - Add new locators when UI changes
-
-## CLI Commands
-
-### Initialize Project
 ```bash
-bingo init
+npm run test:report
 ```
 
-### Add New Page
-```bash
-bingo add page "login"
-```
+Reports include:
+- Test execution summary
+- Scenario details
+- Screenshots on failure
+- Environment information
+- Execution time
 
-### Mask Data
-```bash
-bingo mask "sensitive-data"
-```
+## 🤝 Contributing
 
-### Update Page
-```bash
-bingo update page "oldName" "newName"
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Delete Page
-```bash
-bingo delete page "pageName"
-```
+## 📝 License
 
-## Writing Tests
-
-### Feature File
-```gherkin
-Feature: Login Functionality
-
-  Scenario: Successful login
-    Given I am on the login page
-    When I enter my credentials
-    Then I should be logged in
-```
-
-### Step Definitions
-```javascript
-const { Given, When, Then } = require('@cucumber/cucumber');
-const { env } = require('./lib/mask');
-
-When('I enter my credentials', async function() {
-    const email = env.TEST_EMAIL;
-    const password = env.TEST_PASSWORD;
-    // Use the decrypted values
-});
-```
-
-## Best Practices
-
-1. **Environment Variables**
-   - Always use the `env` proxy to access environment variables
-   - Mask sensitive data before committing to version control
-   - Use different salts for different environments
-
-2. **Page Objects**
-   - Keep locators separate from actions
-   - Use descriptive names for actions and locators
-   - Follow the single responsibility principle
-
-3. **Test Organization**
-   - Group related scenarios in feature files
-   - Use tags to organize and filter tests
-   - Keep step definitions focused and reusable
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-MIT 
+This project is licensed under the MIT License - see the LICENSE file for details. 
