@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLI Tools - Playwright Bingo Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4">
+        <div class="text-xl font-bold mb-8">Playwright Bingo</div>
+        <ul class="space-y-2">
+            <li><a href="../index.html" class="block py-2 px-4 rounded hover:bg-gray-700">Overview</a></li>
+            <li><a href="page-object-model.html" class="block py-2 px-4 rounded hover:bg-gray-700">Page Object Model</a></li>
+            <li><a href="data-masking.html" class="block py-2 px-4 rounded hover:bg-gray-700">Data Masking</a></li>
+            <li><a href="cli-tools.html" class="block py-2 px-4 rounded hover:bg-gray-700">CLI Tools</a></li>
+            <li><a href="writing-tests.html" class="block py-2 px-4 rounded hover:bg-gray-700">Writing Tests</a></li>
+        </ul>
+    </nav>
+
+    <main class="ml-64 p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8">CLI Tools</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8 doc-content">
+                <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+                <p class="text-gray-700 mb-4">
+                    Playwright Bingo provides a set of command-line tools to help you manage your test project efficiently. These tools automate common tasks and ensure consistent project structure.
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Available Commands</h2>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Initialize Project</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo init</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Creates a new Playwright Bingo project with the recommended directory structure and configuration files.
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Add New Page</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo add page "login"</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Creates a new page object with associated locators and actions files.
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Mask Data</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo mask "sensitive-data"</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Masks sensitive data and provides the masked value for use in your environment files.
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Update Page</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo update page "oldName" "newName"</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Renames a page object and updates all related files and references.
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Delete Page</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo delete page "pageName"</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Removes a page object and its associated files from the project.
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Generated Files</h2>
+                <p class="text-gray-700 mb-4">
+                    When using the CLI tools, the following files are generated:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Page locator files in `pages/locators/`</li>
+                    <li>Page action files in `pages/actions/`</li>
+                    <li>Step definition files in `step-definitions/`</li>
+                    <li>Feature files in `features/`</li>
+                </ul>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Best Practices</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Use the CLI tools to maintain consistent project structure</li>
+                    <li>Always use the `add page` command to create new page objects</li>
+                    <li>Use `update page` instead of manually renaming files</li>
+                    <li>Regularly clean up unused pages with `delete page`</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts.js"></script>
+</body>
+</html> 

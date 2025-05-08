@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Tests - Playwright Bingo Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4">
+        <div class="text-xl font-bold mb-8">Playwright Bingo</div>
+        <ul class="space-y-2">
+            <li><a href="../index.html" class="block py-2 px-4 rounded hover:bg-gray-700">Overview</a></li>
+            <li><a href="page-object-model.html" class="block py-2 px-4 rounded hover:bg-gray-700">Page Object Model</a></li>
+            <li><a href="data-masking.html" class="block py-2 px-4 rounded hover:bg-gray-700">Data Masking</a></li>
+            <li><a href="cli-tools.html" class="block py-2 px-4 rounded hover:bg-gray-700">CLI Tools</a></li>
+            <li><a href="writing-tests.html" class="block py-2 px-4 rounded hover:bg-gray-700">Writing Tests</a></li>
+        </ul>
+    </nav>
+
+    <main class="ml-64 p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8">Writing Tests</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8 doc-content">
+                <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+                <p class="text-gray-700 mb-4">
+                    Playwright Bingo uses Cucumber for writing tests in a Behavior-Driven Development (BDD) style. This approach makes tests more readable and maintainable by using natural language to describe test scenarios.
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Feature Files</h2>
+                <p class="text-gray-700 mb-4">
+                    Feature files are written in Gherkin syntax and describe the behavior of your application:
+                </p>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>Feature: Login Functionality
+
+  Scenario: Successful login
+    Given I am on the login page
+    When I enter my credentials
+    Then I should be logged in</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Step Definitions</h2>
+                <p class="text-gray-700 mb-4">
+                    Step definitions connect your Gherkin scenarios to the actual test code:
+                </p>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>const { Given, When, Then } = require('@cucumber/cucumber');
+const { env } = require('./lib/mask');
+
+Given('I am on the login page', async function() {
+    await this.page.goto('/login');
+});
+
+When('I enter my credentials', async function() {
+    const email = env.TEST_EMAIL;
+    const password = env.TEST_PASSWORD;
+    await this.loginPage.login(email, password);
+});
+
+Then('I should be logged in', async function() {
+    await this.dashboardPage.verifyLoggedIn();
+});</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Test Organization</h2>
+                <p class="text-gray-700 mb-4">
+                    Organize your tests effectively:
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Directory Structure</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>playwright-bingo/
+├── features/              # Cucumber feature files
+├── step-definitions/     # Step definitions
+├── support/              # Support files
+└── tests/                # Test files</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Best Practices</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Group related scenarios in feature files</li>
+                    <li>Use tags to organize and filter tests</li>
+                    <li>Keep step definitions focused and reusable</li>
+                    <li>Use page objects for all page interactions</li>
+                    <li>Implement proper error handling and logging</li>
+                </ul>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Running Tests</h2>
+                <p class="text-gray-700 mb-4">
+                    Run your tests using the following commands:
+                </p>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code># Run all tests
+npm test
+
+# Run specific feature
+npm test -- features/login.feature
+
+# Run tests with specific tag
+npm test -- --tags @smoke</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Test Reports</h2>
+                <p class="text-gray-700 mb-4">
+                    Playwright Bingo generates detailed test reports:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Cucumber HTML reports</li>
+                    <li>Allure reports for detailed test analysis</li>
+                    <li>Screenshots for failed tests</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts.js"></script>
+</body>
+</html> 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Object Model - Playwright Bingo Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4">
+        <div class="text-xl font-bold mb-8">Playwright Bingo</div>
+        <ul class="space-y-2">
+            <li><a href="../index.html" class="block py-2 px-4 rounded hover:bg-gray-700">Overview</a></li>
+            <li><a href="page-object-model.html" class="block py-2 px-4 rounded hover:bg-gray-700">Page Object Model</a></li>
+            <li><a href="data-masking.html" class="block py-2 px-4 rounded hover:bg-gray-700">Data Masking</a></li>
+            <li><a href="cli-tools.html" class="block py-2 px-4 rounded hover:bg-gray-700">CLI Tools</a></li>
+            <li><a href="writing-tests.html" class="block py-2 px-4 rounded hover:bg-gray-700">Writing Tests</a></li>
+        </ul>
+    </nav>
+
+    <main class="ml-64 p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8">Page Object Model</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8 doc-content">
+                <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+                <p class="text-gray-700 mb-4">
+                    The Page Object Model (POM) is a design pattern that creates an object repository for web UI elements. This pattern helps in reducing code duplication and improves test maintenance.
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Project Structure</h2>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>playwright-bingo/
+├── pages/
+│   ├── actions/          # Page actions
+│   └── locators/         # Page locators
+├── step-definitions/     # Cucumber step definitions
+└── support/              # Support files</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Implementation</h2>
+                <p class="text-gray-700 mb-4">
+                    The framework implements POM through the following components:
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Page Locators</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>// pages/locators/login.locators.js
+class LoginLocators {
+    constructor(page) {
+        this.page = page;
+        this.usernameInput = 'input[name="username"]';
+        this.passwordInput = 'input[name="password"]';
+        this.loginButton = 'button[type="submit"]';
+    }
+}</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Page Actions</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>// pages/actions/login.actions.js
+class LoginActions {
+    constructor(bingoPage) {
+        this.bingoPage = bingoPage;
+        this.locators = new LoginLocators(bingoPage.page);
+    }
+
+    async login(username, password) {
+        await this.bingoPage.fill(this.locators.usernameInput, username);
+        await this.bingoPage.fill(this.locators.passwordInput, password);
+        await this.bingoPage.click(this.locators.loginButton);
+    }
+}</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Best Practices</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Keep locators separate from actions</li>
+                    <li>Use descriptive names for actions and locators</li>
+                    <li>Follow the single responsibility principle</li>
+                    <li>Maintain a clear separation between page objects and test logic</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts.js"></script>
+</body>
+</html> 

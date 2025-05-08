@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Masking - Playwright Bingo Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="fixed top-0 left-0 h-full w-64 bg-gray-800 text-white p-4">
+        <div class="text-xl font-bold mb-8">Playwright Bingo</div>
+        <ul class="space-y-2">
+            <li><a href="../index.html" class="block py-2 px-4 rounded hover:bg-gray-700">Overview</a></li>
+            <li><a href="page-object-model.html" class="block py-2 px-4 rounded hover:bg-gray-700">Page Object Model</a></li>
+            <li><a href="data-masking.html" class="block py-2 px-4 rounded hover:bg-gray-700">Data Masking</a></li>
+            <li><a href="cli-tools.html" class="block py-2 px-4 rounded hover:bg-gray-700">CLI Tools</a></li>
+            <li><a href="writing-tests.html" class="block py-2 px-4 rounded hover:bg-gray-700">Writing Tests</a></li>
+        </ul>
+    </nav>
+
+    <main class="ml-64 p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8">Data Masking</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8 doc-content">
+                <h2 class="text-2xl font-semibold mb-4">Overview</h2>
+                <p class="text-gray-700 mb-4">
+                    The Data Masking feature provides a secure way to handle sensitive information in your tests. It automatically encrypts sensitive data and provides a simple way to access the decrypted values when needed.
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Setup</h2>
+                <p class="text-gray-700 mb-4">
+                    To use data masking, you need to set up your environment:
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">1. Create .env File</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>BINGO_MASK_SALT=your-secret-salt
+TEST_EMAIL=test@example.com
+TEST_PASSWORD=your-password</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">2. Mask Sensitive Data</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo mask test@example.com</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Usage</h2>
+                <p class="text-gray-700 mb-4">
+                    Access masked values in your tests:
+                </p>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>const { env } = require('./lib/mask');
+
+// Access environment variables (automatically decrypted)
+console.log(env.TEST_EMAIL);  // Shows original value</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Supported Data Types</h2>
+                <p class="text-gray-700 mb-4">
+                    The system automatically detects and masks the following sensitive data types:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Email addresses</li>
+                    <li>Credit card numbers</li>
+                    <li>Phone numbers</li>
+                    <li>Social security numbers</li>
+                    <li>API keys</li>
+                    <li>Passwords</li>
+                    <li>Database credentials</li>
+                    <li>JWT tokens</li>
+                </ul>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Debugging</h2>
+                <p class="text-gray-700 mb-4">
+                    To debug masked values:
+                </p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>const { debug } = require('./lib/mask');
+
+// Show all masked values and their originals
+debug();</code></pre>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Best Practices</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Always use the `env` proxy to access environment variables</li>
+                    <li>Mask sensitive data before committing to version control</li>
+                    <li>Use different salts for different environments</li>
+                    <li>Never log or expose masked values in test output</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../scripts.js"></script>
+</body>
+</html> 
