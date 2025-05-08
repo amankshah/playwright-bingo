@@ -4,7 +4,8 @@ const LocatorManager = require('../locators');
 class TodoActions {
     constructor(bingoPage) {
         this.bingoPage = bingoPage;
-        this.todo = new LocatorManager(bingoPage.page).todo;
+        const locatorManager = new LocatorManager(bingoPage.page);
+        this.todo = locatorManager.todo;
     }
 
     async navigateToTodoPage() {

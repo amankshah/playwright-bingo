@@ -56,17 +56,19 @@ When('I enter my credentials', async function() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     // Show the masked values map
-    debug();
+    // debug();
 });
 
 Then('I should see "Email: test@example.com"', async function() {
     const email = env.TEST_EMAIL;
-    console.log('Email:', email);
+    console.log('/nEmail:', email);
+    console.log("Email value in env", process.env.TEST_EMAIL);
     expect(email).toBe('test@example.com');
 });
 
 Then('I should see "Password: secret"', async function() {
     const password = env.TEST_PASSWORD;
-    console.log('Password:', password);
-    expect(password).toBe(password);
+    console.log('/nPassword:', password);
+    console.log("Password value in env", process.env.TEST_PASSWORD);
+    expect(password).toBe("secret");
 });

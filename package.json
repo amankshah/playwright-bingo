@@ -66,6 +66,7 @@
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
     "dotenv": "^16.0.3",
+    "fs-extra": "^11.3.0",
     "module-alias": "^2.2.3",
     "properties-reader": "^2.2.0"
   },

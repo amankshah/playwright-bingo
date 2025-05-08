@@ -18,6 +18,12 @@ Feature: Todo List Management
     Given I am on the todo page
     And I have a todo item "Buy groceries"
     When I delete the todo item "Buy groceries"
-    Then It should be removed from the list 
+    Then It should be removed from the list
+
+  Scenario: Verify masked credentials
+    Given I am on the todo page
+    When I enter my credentials
+    Then I should see "Email: test@example.com"
+    And I should see "Password: secret" 
 
 

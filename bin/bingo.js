@@ -211,15 +211,7 @@ function handleMaskData(value) {
     console.log('Original:', value);
     console.log('Masked:  ', masked);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('\n📝 Usage:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('1. Add to your .env file:');
-    console.log(`   TEST_EMAIL=${masked}`);
-    console.log('\n2. Use in your code:');
-    console.log('   const { env } = require(\'./lib/mask\');');
-    console.log('   const email = env.TEST_EMAIL;');
-    console.log('\n💡 Note: The value will be automatically decrypted when accessed.');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+   
 }
 
 // Function to generate random salt
