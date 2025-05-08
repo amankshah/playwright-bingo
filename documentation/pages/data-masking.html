@@ -46,6 +46,51 @@ TEST_PASSWORD=your-password</code></pre>
                     <pre><code>bingo mask test@example.com</code></pre>
                 </div>
 
+                <h2 class="text-2xl font-semibold mt-8 mb-4">Properties File Masking</h2>
+                <p class="text-gray-700 mb-4">
+                    The framework can automatically mask sensitive values in `.properties` files:
+                </p>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">1. Configure Masking</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>// bingo.config.js
+module.exports = {
+    dataMasking: {
+        enabled: true,
+        properties: {
+            autoMask: true,
+            sensitiveKeys: [
+                'password',
+                'secret',
+                'key',
+                'token',
+                'credential',
+                'apiKey',
+                'auth',
+                'private'
+            ]
+        }
+    }
+};</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">2. Use Properties Class</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>const { properties } = require('./lib');
+
+// Load properties with automatic masking
+properties.load('path/to/properties.file', true);
+
+// Get masked value
+const maskedValue = properties.get('db.password');
+
+// Get original value
+const originalValue = properties.get('db.password', true);
+
+// Save masked properties to a new file
+properties.save('path/to/masked.properties', true);</code></pre>
+                </div>
+
                 <h2 class="text-2xl font-semibold mt-8 mb-4">Usage</h2>
                 <p class="text-gray-700 mb-4">
                     Access masked values in your tests:
@@ -71,6 +116,7 @@ console.log(env.TEST_EMAIL);  // Shows original value</code></pre>
                     <li>Passwords</li>
                     <li>Database credentials</li>
                     <li>JWT tokens</li>
+                    <li>Properties file values containing sensitive keys</li>
                 </ul>
 
                 <h2 class="text-2xl font-semibold mt-8 mb-4">Debugging</h2>
@@ -90,6 +136,8 @@ debug();</code></pre>
                     <li>Mask sensitive data before committing to version control</li>
                     <li>Use different salts for different environments</li>
                     <li>Never log or expose masked values in test output</li>
+                    <li>Keep original properties files separate from masked ones</li>
+                    <li>Use descriptive names for masked properties files (e.g., `application.masked.properties`)</li>
                 </ul>
             </div>
         </div>

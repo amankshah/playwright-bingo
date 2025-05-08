@@ -26,7 +26,7 @@
             <div class="bg-white rounded-lg shadow-lg p-6 mb-8 doc-content">
                 <h2 class="text-2xl font-semibold mb-4">Overview</h2>
                 <p class="text-gray-700 mb-4">
-                    Playwright Bingo provides a set of command-line tools to help you manage your test project efficiently. These tools automate common tasks and ensure consistent project structure.
+                    Playwright Bingo provides a set of command-line tools to help you manage your test project, create new pages, and handle sensitive data.
                 </p>
 
                 <h2 class="text-2xl font-semibold mt-8 mb-4">Available Commands</h2>
@@ -52,8 +52,36 @@
                     <pre><code>bingo mask "sensitive-data"</code></pre>
                 </div>
                 <p class="text-gray-700 mt-2 mb-4">
-                    Masks sensitive data and provides the masked value for use in your environment files.
+                    Masks sensitive data and provides the masked value for use in your environment files or properties files.
                 </p>
+                <div class="bg-gray-100 p-4 rounded-lg mt-4">
+                    <pre><code># Example usage:
+bingo mask "test@example.com"
+# Output:
+# 🔒 Masked Value:
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Original: test@example.com
+# Masked:  BINGO_MASK_e2b9d415
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mt-6 mb-4">Unmask Data</h3>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <pre><code>bingo unmask "BINGO_MASK_<hash>"</code></pre>
+                </div>
+                <p class="text-gray-700 mt-2 mb-4">
+                    Decrypts a masked value to show its original value. Useful for debugging or verifying masked values.
+                </p>
+                <div class="bg-gray-100 p-4 rounded-lg mt-4">
+                    <pre><code># Example usage:
+bingo unmask "BINGO_MASK_e2b9d415"
+# Output:
+# 🔓 Unmasked Value:
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Masked:   BINGO_MASK_e2b9d415
+# Original: test@example.com
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</code></pre>
+                </div>
 
                 <h3 class="text-xl font-semibold mt-6 mb-4">Update Page</h3>
                 <div class="bg-gray-100 p-4 rounded-lg">
@@ -84,10 +112,11 @@
 
                 <h2 class="text-2xl font-semibold mt-8 mb-4">Best Practices</h2>
                 <ul class="list-disc list-inside space-y-2 text-gray-700">
-                    <li>Use the CLI tools to maintain consistent project structure</li>
-                    <li>Always use the `add page` command to create new page objects</li>
-                    <li>Use `update page` instead of manually renaming files</li>
-                    <li>Regularly clean up unused pages with `delete page`</li>
+                    <li>Use descriptive names for pages and components</li>
+                    <li>Keep sensitive data masked in version control</li>
+                    <li>Use the mask command before committing sensitive data</li>
+                    <li>Verify masked values using the unmask command when needed</li>
+                    <li>Follow a consistent naming convention for your pages</li>
                 </ul>
             </div>
         </div>
