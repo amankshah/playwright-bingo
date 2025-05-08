@@ -2,6 +2,25 @@
 
 A powerful testing framework built on top of Playwright and Cucumber, designed to make end-to-end testing more efficient and maintainable.
 
+[![Documentation](https://img.shields.io/badge/Documentation-Playwright%20Bingo-blue)](https://playwright-bingo.netlify.app/)
+[![npm version](https://img.shields.io/npm/v/playwright-bingo)](https://www.npmjs.com/package/playwright-bingo)
+
+## 📚 Documentation
+
+Visit our [official documentation site](https://playwright-bingo.netlify.app/) for comprehensive guides and resources.
+
+### What's in the Documentation?
+
+| Section | Description |
+|---------|-------------|
+| 🎯 **Getting Started** | Quick start guide and installation instructions |
+| 📖 **Guides** | Detailed tutorials and how-to guides |
+| 🔍 **API Reference** | Complete API documentation and examples |
+| 💡 **Best Practices** | Recommended patterns and tips |
+| 🚀 **Examples** | Real-world examples and use cases |
+
+> 💡 **Pro Tip**: Bookmark the [documentation site](https://playwright-bingo.netlify.app/) for quick reference while working with Playwright Bingo.
+
 ## Features
 
 - 🎯 **Page Object Model**: Organized structure for better test maintenance
