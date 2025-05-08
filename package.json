@@ -6,6 +6,31 @@
   "bin": {
     "bingo": "./bin/bingo.js"
   },
+  "_moduleAliases": {
+    "@bingo": "lib",
+    "@playwright-bingo": "lib"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./env": "./lib/mask.js",
+    "./properties": "./lib/properties.js",
+    "./mask": "./lib/mask.js",
+    "./bingo-page": "./lib/bingo-page.js",
+    "./properties-handler": "./lib/properties-handler.js",
+    "./page-manager": "./page.manager.js",
+    "./locators": "./pages/locators/index.js",
+    "./actions": "./pages/actions/index.js",
+    "./lib/*": "./lib/*",
+    "./bin/*": "./bin/*",
+    "./pages/*": "./pages/*",
+    "./templates/*": "./templates/*"
+  },
+  "imports": {
+    "#lib/*": "./lib/*",
+    "#bin/*": "./bin/*",
+    "#pages/*": "./pages/*",
+    "#templates/*": "./templates/*"
+  },
   "scripts": {
     "test": "cucumber-js",
     "test:parallel": "cucumber-js --parallel 2",
@@ -41,11 +66,12 @@
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
     "dotenv": "^16.0.3",
+    "module-alias": "^2.2.3",
     "properties-reader": "^2.2.0"
   },
   "devDependencies": {
-    "allure-cucumberjs": "^2.9.0",
-    "allure-commandline": "^2.27.0"
+    "allure-commandline": "^2.27.0",
+    "allure-cucumberjs": "^2.9.0"
   },
   "engines": {
     "node": ">=14.0.0"

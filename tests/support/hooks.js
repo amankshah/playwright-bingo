@@ -1,6 +1,6 @@
 const { Before, After, BeforeAll, AfterAll, setDefaultTimeout, setWorldConstructor } = require('@cucumber/cucumber');
 const { chromium } = require('@playwright/test');
-const { BingoPage } = require('../../lib/index');
+const { BingoPage } = require('playwright-bingo');
 const path = require('path');
 const fs = require('fs');
 

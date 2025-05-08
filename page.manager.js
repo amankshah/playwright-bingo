@@ -1,3 +1,5 @@
+const TodoActions = require('./pages/actions/todo.actions');
+
 class PageManager {
     constructor(page) {
         this.page = page;
@@ -5,7 +7,7 @@ class PageManager {
     }
 
     _initializePages() {
-        // Pages will be dynamically added here
+        this.todo = new TodoActions(this.page);
     }
 }
 
