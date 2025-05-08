@@ -1,40 +1,59 @@
 {
   "name": "playwright-bingo",
   "version": "1.0.0",
-  "description": "A powerful Playwright framework with self-healing capabilities and page object model support",
+  "description": "A powerful testing framework built on top of Playwright and Cucumber, designed to make end-to-end testing more efficient and maintainable",
   "main": "lib/index.js",
   "bin": {
     "bingo": "./bin/bingo.js"
   },
   "scripts": {
     "test": "cucumber-js",
-    "test:allure": "rimraf allure-results && cucumber-js && allure generate ./allure-results --clean",
-    "test:allure:open": "rimraf allure-results && cucumber-js && allure generate ./allure-results --clean && allure open allure-report"
+    "test:parallel": "cucumber-js --parallel 2",
+    "test:report": "node generate-report.js",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "playwright",
     "cucumber",
-    "bdd",
     "testing",
-    "automation"
+    "automation",
+    "bdd",
+    "framework",
+    "selenium",
+    "webdriver",
+    "e2e",
+    "end-to-end"
   ],
-  "author": "",
-  "license": "ISC",
-  "files": [
-    "bin",
-    "lib",
-    "templates"
-  ],
+  "author": "Aman Kumar Shah",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amankshah/playwright-bingo"
+  },
+  "bugs": {
+    "url": "https://github.com/amankshah/playwright-bingo/issues"
+  },
+  "homepage": "https://github.com/amankshah/playwright-bingo#readme",
   "dependencies": {
-    "@cucumber/cucumber": "^11.2.0",
-    "@playwright/test": "^1.52.0",
-    "allure-cucumberjs": "^3.2.1",
-    "allure-playwright": "^3.2.1",
-    "commander": "^11.1.0",
-    "dotenv": "^16.5.0",
-    "properties-reader": "^2.3.0"
+    "@cucumber/cucumber": "^10.0.1",
+    "@playwright/test": "^1.40.0",
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "dotenv": "^16.0.3",
+    "properties-reader": "^2.2.0"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5"
-  }
+    "allure-cucumberjs": "^2.9.0",
+    "allure-commandline": "^2.27.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "lib/",
+    "bin/",
+    "templates/",
+    "LICENSE",
+    "README.md"
+  ]
 }

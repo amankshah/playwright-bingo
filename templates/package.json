@@ -1,0 +1,19 @@
+{
+  "name": "playwright-bingo-project",
+  "version": "1.0.0",
+  "description": "A Playwright Bingo test automation project",
+  "scripts": {
+    "test": "cucumber-js",
+    "test:parallel": "cucumber-js --parallel 2",
+    "test:report": "node generate-report.js"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.0.1",
+    "@playwright/test": "^1.40.0",
+    "playwright-bingo": "latest"
+  },
+  "devDependencies": {
+    "allure-cucumberjs": "^2.9.0",
+    "allure-commandline": "^2.27.0"
+  }
+} 
