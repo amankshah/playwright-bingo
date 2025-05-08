@@ -4,8 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { program } = require('commander');
 const { initializeProject } = require('./init');
-const { mask: maskData, env } = require('../lib/mask');
-const MaskedValue = require('../lib/masked-value');
+const { mask: maskData, env, getOriginalValue } = require('../lib/mask');
 const dotenv = require('dotenv');
 
 // Load environment variables
@@ -182,7 +181,7 @@ function updatePage(oldPageName, newPageName) {
   console.log(`Page '${oldPageName}' updated to '${newPageName}'.`);
 }
 
-function maskData(value) {
+function handleMaskData(value) {
     if (!value) {
         console.error('❌ Error: No value provided to mask');
         return;
@@ -271,7 +270,31 @@ program
     .description('Mask sensitive data')
     .argument('<data>', 'data to mask')
     .action((data) => {
-        maskData(data);
+        handleMaskData(data);
+    });
+
+program
+    .command('unmask')
+    .description('Unmask a masked value')
+    .argument('<maskedValue>', 'masked value to unmask')
+    .action((maskedValue) => {
+        if (!maskedValue) {
+            console.error('❌ Error: No masked value provided');
+            return;
+        }
+
+        try {
+            const originalValue = getOriginalValue(maskedValue);
+            
+            console.log('\n🔓 Unmasked Value:');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('Masked:   ', maskedValue);
+            console.log('Original: ', originalValue);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+        } catch (error) {
+            console.error('❌ Error:', error.message);
+            console.log('\n💡 Tip: Make sure you\'re using the same BINGO_MASK_SALT that was used to mask the value.');
+        }
     });
 
 program.parse(); 
