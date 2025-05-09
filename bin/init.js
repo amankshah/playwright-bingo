@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execSync } = require('child_process');
 
 function generateRandomSalt() {
     return crypto.randomBytes(32).toString('base64');
@@ -107,6 +108,30 @@ module.exports = new TodoActions();`;
     );
 }
 
+function createPackageJson(projectRoot) {
+    const packageJson = {
+        "name": "playwright-bingo-project",
+        "version": "1.0.0",
+        "description": "Playwright Bingo Test Project",
+        "scripts": {
+            "test": "cucumber-js",
+            "test:report": "cucumber-js --format @cucumber/pretty-formatter --format allure-cucumberjs"
+        },
+        "dependencies": {
+            "@cucumber/cucumber": "^11.2.0",
+            "@playwright/test": "^1.52.0",
+            "allure-cucumberjs": "^3.2.1",
+            "allure-playwright": "^3.2.1",
+            "playwright-bingo": "latest"
+        }
+    };
+
+    fs.writeFileSync(
+        path.join(projectRoot, 'package.json'),
+        JSON.stringify(packageJson, null, 2)
+    );
+}
+
 function initializeProject() {
     try {
         console.log('🚀 Initializing Playwright Bingo project...');
@@ -134,26 +159,30 @@ function initializeProject() {
         createDefaultFiles(targetDir);
         console.log('✓ Project files created successfully!');
 
-        // Update package.json with required dependencies
-        const packageJsonPath = path.join(targetDir, 'package.json');
-        if (fs.existsSync(packageJsonPath)) {
-            const packageJson = require(packageJsonPath);
-            packageJson.dependencies = {
-                ...packageJson.dependencies,
-                "@cucumber/cucumber": "^11.2.0",
-                "@playwright/test": "^1.52.0",
-                "allure-cucumberjs": "^3.2.1",
-                "allure-playwright": "^3.2.1",
-                "playwright-bingo": "latest"
-            };
-            fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+        // Create or update package.json
+        if (!fs.existsSync(path.join(targetDir, 'package.json'))) {
+            createPackageJson(targetDir);
+            console.log('✓ Created package.json');
         }
 
         console.log('\n📦 Installing dependencies...');
-        require('child_process').execSync('npm install', { stdio: 'inherit' });
+        try {
+            execSync('npm install', { stdio: 'inherit' });
+        } catch (error) {
+            console.error('\n⚠️ Warning: Failed to install dependencies automatically.');
+            console.log('Please run the following commands manually:');
+            console.log('npm install');
+            console.log('npx playwright install');
+        }
 
         console.log('\n🌐 Installing Playwright browsers...');
-        require('child_process').execSync('npx playwright install', { stdio: 'inherit' });
+        try {
+            execSync('npx playwright install', { stdio: 'inherit' });
+        } catch (error) {
+            console.error('\n⚠️ Warning: Failed to install Playwright browsers automatically.');
+            console.log('Please run the following command manually:');
+            console.log('npx playwright install');
+        }
 
         console.log('\n✨ Project setup completed successfully!');
         console.log('\n🎯 Next steps:');
