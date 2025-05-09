@@ -14,8 +14,25 @@ const crypto = require('crypto');
 // Load environment variables
 dotenv.config();
 
+// Function to generate random salt
+function generateRandomSalt(length = 64) {
+    return crypto.randomBytes(length).toString('hex');
+}
+
+// Function to ensure .env file exists with BINGO_MASK_SALT
+async function ensureEnvFile() {
+    const envPath = path.join(process.cwd(), '.env');
+    if (!fs.existsSync(envPath)) {
+        const randomSalt = generateRandomSalt();
+        await fs.writeFile(envPath, `BINGO_MASK_SALT=${randomSalt}\n`);
+        console.log(chalk.green('✓ Created .env file with random BINGO_MASK_SALT'));
+        // Reload environment variables
+        dotenv.config();
+    }
+}
+
 // Security check for BINGO_MASK_SALT
-if (!process.env.BINGO_MASK_SALT) {
+if (!process.env.BINGO_MASK_SALT && process.argv[2] !== 'init') {
     console.error('❌ Error: BINGO_MASK_SALT environment variable is not set.');
     console.error('This is required for secure data masking.');
     console.error('\nPlease set it in your .env file:');
@@ -26,7 +43,7 @@ if (!process.env.BINGO_MASK_SALT) {
 }
 
 // Validate salt strength
-if (process.env.BINGO_MASK_SALT.length < 32) {
+if (process.env.BINGO_MASK_SALT && process.env.BINGO_MASK_SALT.length < 32) {
     console.warn('⚠️  Warning: BINGO_MASK_SALT should be at least 32 characters long for better security.');
     console.warn('Consider using a longer, more random salt.');
 }
@@ -431,11 +448,6 @@ function handleMaskData(value) {
    
 }
 
-// Function to generate random salt
-function generateRandomSalt(length = 64) {
-    return crypto.randomBytes(length).toString('hex');
-}
-
 program
     .name('bingo')
     .description('CLI for Playwright Bingo framework')
@@ -451,6 +463,9 @@ program
 
             console.log(chalk.blue('🚀 Initializing Playwright Bingo project...'));
 
+            // Ensure .env file exists with BINGO_MASK_SALT
+            await ensureEnvFile();
+
             // Copy all template files
             await fsExtra.copy(templateDir, currentDir);
 
@@ -462,11 +477,6 @@ program
                     configPath
                 );
             }
-
-            // Create .env file with random salt
-            const envPath = path.join(currentDir, '.env');
-            const randomSalt = generateRandomSalt();
-            await fs.writeFile(envPath, `BINGO_MASK_SALT=${randomSalt}\n`);
 
             console.log(chalk.green('✓ Project files created successfully!'));
 
