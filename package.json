@@ -73,7 +73,8 @@
     "dotenv": "^16.3.1",
     "fs-extra": "^11.3.0",
     "module-alias": "^2.2.3",
-    "properties-reader": "^2.3.0"
+    "properties-reader": "^2.3.0",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "allure-commandline": "^2.27.0",
