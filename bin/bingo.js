@@ -24,7 +24,7 @@ async function ensureEnvFile() {
     const envPath = path.join(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) {
         const randomSalt = generateRandomSalt();
-        await fs.writeFile(envPath, `BINGO_MASK_SALT=${randomSalt}\n`);
+        await fs.promises.writeFile(envPath, `BINGO_MASK_SALT=${randomSalt}\n`);
         console.log(chalk.green('✓ Created .env file with random BINGO_MASK_SALT'));
         // Reload environment variables
         dotenv.config();
