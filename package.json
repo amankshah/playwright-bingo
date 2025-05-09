@@ -89,11 +89,5 @@
     "templates/",
     "LICENSE",
     "README.md"
-  ],
-  "overrides": {
-    "reflect-metadata": "0.2.2"
-  },
-  "resolutions": {
-    "reflect-metadata": "0.2.2"
-  }
+  ]
 }
