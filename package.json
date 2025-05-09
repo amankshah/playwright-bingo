@@ -1,6 +1,6 @@
 {
   "name": "playwright-bingo",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A powerful testing framework built on top of Playwright and Cucumber, designed to make end-to-end testing more efficient and maintainable",
   "main": "lib/index.js",
   "bin": {
