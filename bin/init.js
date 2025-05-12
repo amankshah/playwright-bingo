@@ -122,7 +122,7 @@ function createPackageJson(projectRoot) {
             "@playwright/test": "^1.52.0",
             "allure-cucumberjs": "^3.2.1",
             "allure-playwright": "^3.2.1",
-            "playwright-bingo": "latest"
+            "playwright-bingo": "^1.0.17"
         }
     };
 
@@ -149,6 +149,10 @@ function initializeProject() {
         createDirectories(targetDir);
 
         // Copy template files
+        if (!fs.existsSync(templateDir)) {
+            console.error('❌ Error: Template directory not found. Please ensure playwright-bingo is properly installed.');
+            process.exit(1);
+        }
         copyDir(templateDir, targetDir);
 
         // Create .env file with random BINGO_MASK_SALT

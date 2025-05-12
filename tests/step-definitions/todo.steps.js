@@ -1,5 +1,7 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { LocatorManager, PageManager, env, debug } = require('playwright-bingo');
+const chalk = require('chalk');
+
 
 Given('I am on the todo page', async function() {
     // Initialize page manager
@@ -100,7 +102,7 @@ When('I enter my credentials', async function() {
 
 Then('I should see "Email: test@example.com"', async function() {
     const email = env.TEST_EMAIL;
-    console.log('/nEmail:', email);
+    console.log('/n Email:', email);
     console.log("Email value in env", process.env.TEST_EMAIL);
     if (email !== 'test@example.com') {
         throw new Error(`Expected email to be 'test@example.com' but got '${email}'`);
@@ -109,7 +111,7 @@ Then('I should see "Email: test@example.com"', async function() {
 
 Then('I should see "Password: secret"', async function() {
     const password = env.TEST_PASSWORD;
-    console.log('/nPassword:', password);
+    console.log('/n Password:', password);
     console.log("Password value in env", process.env.TEST_PASSWORD);
     if (password !== 'secret') {
         throw new Error(`Expected password to be 'secret' but got '${password}'`);

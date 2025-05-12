@@ -45,14 +45,45 @@ class TodoActions {
     }
 
     async verifyTodoListEmpty() {
+        // Wait a bit for the deletion to complete
         await this.bingoPage.waitForTimeout(1000);
+        
+        // Check if the list exists but has no items
         const todoList = await this.bingoPage.findElement(this.todo.todoList, { checkExistence: false });
         if (await this.bingoPage.elementExists(this.todo.todoList)) {
             const items = await todoList.locator('li').count();
             expect(items).toBe(0);
         } else {
+            // If list doesn't exist, that's also fine
             expect(true).toBeTruthy();
         }
+    }
+
+    async filterTodos(filter) {
+        switch(filter.toLowerCase()) {
+            case 'all':
+                await this.page.click(this.locators.allFilter);
+                break;
+            case 'active':
+                await this.page.click(this.locators.activeFilter);
+                break;
+            case 'completed':
+                await this.page.click(this.locators.completedFilter);
+                break;
+        }
+    }
+
+    async clearCompleted() {
+        await this.page.click(this.locators.clearCompletedButton);
+    }
+
+    async getTodoCount() {
+        const countText = await this.page.textContent(this.locators.todoCount);
+        return parseInt(countText);
+    }
+
+    async getTodoItems() {
+        return await this.page.$$(this.locators.todoItems);
     }
 }
 

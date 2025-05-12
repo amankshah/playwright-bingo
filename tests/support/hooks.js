@@ -59,4 +59,7 @@ After(async function(scenario) {
 
 AfterAll(async function() {
     await browser.close();
+    
+    console.log("Browser closed");
+    process.exit(0); // Ensure CLI is ready for next prompt
 }); 

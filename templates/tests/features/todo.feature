@@ -1,6 +1,6 @@
 Feature: Todo List Management
   As a user
-  I want to manage my todo list
+  I want to manage my todo items
   So that I can keep track of my tasks
 
   Scenario: Add a new todo item
@@ -25,3 +25,5 @@ Feature: Todo List Management
     When I enter my credentials
     Then I should see "Email: test@example.com"
     And I should see "Password: secret" 
+
+

@@ -493,7 +493,9 @@ program
             console.log('1. Review your .env file for the generated BINGO_MASK_SALT');
             console.log('2. Start writing your tests in the features directory');
             console.log('3. Run your tests with: npm test');
-            console.log('\n🎮 Happy and Easy testing with Bingo! 🎲');
+            console.log(chalk.blue  ('\n' + '🧑‍💻 Gear up for seamless, bug-busting automation with Playwright Bingo! 🎯'));
+            console.log('Engineered with passion by '+chalk.blue  ('Aman Kumar Shah'));
+              
             console.log(chalk.cyan('   Documentation: https://playwright-bingo.netlify.app/'));
         } catch (error) {
             console.error(chalk.red('❌ Error initializing project:'), error);

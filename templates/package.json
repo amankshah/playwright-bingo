@@ -1,23 +1,23 @@
 {
-  "name": "playwright-bingo-project",
-  "version": "1.0.0",
-  "description": "Playwright Bingo Test Framework Project",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "cucumber-js",
-    "addPage": "bingo add page login",
-    "deletePage": "bingo delete page login",
-    "updatePage": "bingo update page login newPage",
-    "deleteNewPage": "bingo delete page newPage",
-    "test:parallel": "cucumber-js --parallel 2",
-    "test:report": "node generate-report.js"
-  },
-  "dependencies": {
-    "@cucumber/cucumber": "^10.0.1",
-    "@playwright/test": "^1.40.0",
-    "commander": "^11.1.0",
-    "cucumber-html-reporter": "^5.5.0",
-    "dotenv": "^16.3.1",
-    "playwright-bingo": "^1.0.13"
-  }
-} 
+    "name": "playwright-bingo-project",
+    "version": "1.0.0",
+    "description": "Playwright Bingo Test Framework Project",
+    "main": "lib/index.js",
+    "scripts": {
+      "test": "cucumber-js",
+      "addPage": "bingo add page login",
+      "deletePage": "bingo delete page login",
+      "updatePage": "bingo update page login newPage",
+      "deleteNewPage": "bingo delete page newPage",
+      "test:parallel": "cucumber-js --parallel 2",
+      "test:report": "node generate-report.js"
+    },
+    "dependencies": {
+      "@cucumber/cucumber": "latest",
+      "@playwright/test": "latest",
+      "commander": "latest",
+      "cucumber-html-reporter": "latest",
+      "dotenv": "latest",
+      "playwright-bingo": "latest"
+    }
+  } 

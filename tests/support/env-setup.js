@@ -1,9 +1,9 @@
 const { Before, After } = require('@cucumber/cucumber');
-const { env } = require('../../lib/mask');
+const { env } = require('playwright-bingo/env');
 const dotenv = require('dotenv');
 
 // Load environment variables
-dotenv.config();
+// dotenv.config();
 
 // Debug function to check environment variables
 function debugEnv() {
@@ -17,7 +17,7 @@ function debugEnv() {
 // Set up environment variables before tests
 Before(async function() {
     // Debug current environment
-    debugEnv();
+    // debugEnv();
 
     // Set up masked values if they don't exist
     if (!process.env.BINGO_MASK_SALT) {
@@ -32,7 +32,7 @@ Before(async function() {
     }
 
     // Debug after setup
-    debugEnv();
+//     debugEnv();
 });
 
 // Clean up after tests
