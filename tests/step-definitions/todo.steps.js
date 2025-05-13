@@ -1,84 +1,43 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-const { LocatorManager, PageManager, env, debug } = require('playwright-bingo');
+const { PageManager, env } = require('playwright-bingo');
+const TodoActions = require('../../pages/actions/todo.actions.js');
 const chalk = require('chalk');
 
 
 Given('I am on the todo page', async function() {
-    // Initialize page manager
     await PageManager.initialize();
     this.page = await PageManager.getPage('todo');
-    // Mock page navigation
-    this.page.goto = async () => {};
+    console.log('DEBUG: this.page.constructor.name =', this.page.constructor.name); // Should be BingoPage
+    this.todoActions = new TodoActions(this.page);
+    await this.todoActions.navigateToTodoPage();
 });
 
 When('I add a new todo item {string}', async function(todoText) {
-    // Mock page interactions
-    this.page.type = async () => {};
-    this.page.press = async () => {};
-    await this.page.type('[data-test="todo-input"]', todoText);
-    await this.page.press('[data-test="todo-input"]', 'Enter');
+    await this.todoActions.addTodoItem(todoText);
 });
 
 Then('I should see {string} in the todo list', async function(todoText) {
-    // Mock locator and visibility check
-    const mockLocator = {
-        toBeVisible: async () => {}
-    };
-    this.page.locator = () => mockLocator;
-    const todoItem = await this.page.locator(`[data-test="todo-item"]:has-text("${todoText}")`);
-    await todoItem.toBeVisible();
+    await this.todoActions.verifyTodoItemVisible(todoText);
 });
 
 Given('I have a todo item {string}', async function(todoText) {
-    // Mock page interactions
-    this.page.type = async () => {};
-    this.page.press = async () => {};
-    await this.page.type('[data-test="todo-input"]', todoText);
-    await this.page.press('[data-test="todo-input"]', 'Enter');
+    await this.todoActions.addTodoItem(todoText);
 });
 
 When('I complete the todo item {string}', async function(todoText) {
-    // Mock locator and click
-    const mockLocator = {
-        locator: () => ({
-            click: async () => {}
-        })
-    };
-    this.page.locator = () => mockLocator;
-    const todoItem = await this.page.locator(`[data-test="todo-item"]:has-text("${todoText}")`);
-    await todoItem.locator('[data-test="todo-checkbox"]').click();
+    await this.todoActions.completeTodoItem(todoText);
 });
 
-Then('It should show as completed', async function() {
-    // Mock locator and visibility check
-    const mockLocator = {
-        toBeVisible: async () => {}
-    };
-    this.page.locator = () => mockLocator;
-    const completedItem = await this.page.locator('[data-test="todo-item"].completed');
-    await completedItem.toBeVisible();
+Then('It should show as completed', async function(todoText) {
+    await this.todoActions.verifyTodoItemCompleted(todoText);
 });
 
 When('I delete the todo item {string}', async function(todoText) {
-    // Mock locator and click
-    const mockLocator = {
-        locator: () => ({
-            click: async () => {}
-        })
-    };
-    this.page.locator = () => mockLocator;
-    const todoItem = await this.page.locator(`[data-test="todo-item"]:has-text("${todoText}")`);
-    await todoItem.locator('[data-test="todo-delete"]').click();
+    await this.todoActions.deleteTodoItem(todoText);
 });
 
 Then('It should be removed from the list', async function() {
-    // Mock locator and count check
-    const mockLocator = {
-        toHaveCount: async () => {}
-    };
-    this.page.locator = () => mockLocator;
-    const todoList = await this.page.locator('[data-test="todo-list"]');
-    await todoList.toHaveCount(0);
+    await this.todoActions.verifyTodoListEmpty();
 });
 
 When('I enter my credentials', async function() {

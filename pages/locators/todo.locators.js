@@ -7,7 +7,7 @@ class TodoLocators {
             'input[placeholder="What needs to be done false?"]', 
             'input[placeholder="What needs to be done?"]'];
         this.todoList = ['.todo-lis0', '.todo-list'];
-        this.todoItems = '.todo-list li';
+        this.todoItems = '[data-testid="todo-item"]';
         this.todoItemCheckbox = '.todo-list li input[type="checkbox"]';
         this.todoItemLabel = '.todo-list li label';
         this.todoItemDeleteButton = '.todo-list li .destroy';

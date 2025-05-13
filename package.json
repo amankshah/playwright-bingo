@@ -1,6 +1,6 @@
 {
   "name": "playwright-bingo",
-  "version": "1.0.17",
+  "version": "1.2.00",
   "description": "A powerful testing framework built on top of Playwright and Cucumber, designed to make end-to-end testing more efficient and maintainable",
   "main": "lib/index.js",
   "bin": {
@@ -62,7 +62,7 @@
   "bugs": {
     "url": "https://github.com/amankshah/playwright-bingo/issues"
   },
-  "homepage": "https://github.com/amankshah/playwright-bingo#readme",
+  "homepage": "https://playwright-bingo.netlify.app/",
   "documentation": "https://playwright-bingo.netlify.app/",
   "dependencies": {
     "@cucumber/cucumber": "^10.0.1",

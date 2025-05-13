@@ -98,7 +98,7 @@ When('I enter my credentials', async function() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 });
 
-Then('I should see "Email: test@example.com"', async function() {
+Then('I should see "Email: secret@gmail.com"', async function() {
     const email = env.TEST_EMAIL;
     console.log('/n Email:', email);
     console.log("Email value in env", process.env.TEST_EMAIL);
@@ -108,8 +108,8 @@ Then('I should see "Email: test@example.com"', async function() {
             console.log("After masking use it place it in the env file")
             console.log("And to use this just do " + chalk.green('env.TEST_EMAIL'));
     }
-    if (email !== 'test@example.com') {
-        throw new Error(`Expected email to be 'test@example.com' but got '${email}'`);
+    if (email !== 'secret@gmail.com') {
+        throw new Error(`Expected email to be 'secret@gmail.com' but got '${email}'`);
     }
 });
 
