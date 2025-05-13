@@ -8,9 +8,9 @@ class TodoLocators {
             'input[placeholder="What needs to be done?"]'];
         this.todoList = ['.todo-lis0', '.todo-list'];
         this.todoItems = '[data-testid="todo-item"]';
-        this.todoItemCheckbox = '.todo-list li input[type="checkbox"]';
-        this.todoItemLabel = '.todo-list li label';
-        this.todoItemDeleteButton = '.todo-list li .destroy';
+        this.todoItemCheckbox = 'input[type="checkbox"]';
+        this.todoItemLabel = 'label';
+        this.todoItemDeleteButton = '.destroy';
         
         // Filter locators
         this.allFilter = 'a[href="#/"]';

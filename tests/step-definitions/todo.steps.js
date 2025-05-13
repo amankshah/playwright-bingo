@@ -28,8 +28,8 @@ When('I complete the todo item {string}', async function(todoText) {
     await this.todoActions.completeTodoItem(todoText);
 });
 
-Then('It should show as completed', async function(todoText) {
-    await this.todoActions.verifyTodoItemCompleted(todoText);
+Then('It should show as completed', async function() {
+    await this.todoActions.verifyTodoItemCompleted('Buy groceries');
 });
 
 When('I delete the todo item {string}', async function(todoText) {

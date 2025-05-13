@@ -75,9 +75,10 @@ class TodoActions {
     }
 
     async verifyTodoItemCompleted(todoText) {
+        // Wait for the completed class to appear on the todo item
         const itemLocators = Array.isArray(this.todo.todoItems)
-            ? this.todo.todoItems.map(sel => `${sel}.completed:has-text("${todoText}")`)
-            : [`${this.todo.todoItems}.completed:has-text("${todoText}")`];
+            ? this.todo.todoItems.map(sel => `${sel}:has-text("${todoText}")`)
+            : [`${this.todo.todoItems}:has-text("${todoText}")`];
         let lastItem;
         for (const locator of itemLocators) {
             const items = this.bingoPage.locator(locator);
@@ -85,6 +86,20 @@ class TodoActions {
                 lastItem = items.last();
                 break;
             }
+        }
+        // Wait for the completed class to appear (retry for up to 2s)
+        const maxRetries = 20;
+        let found = false;
+        for (let i = 0; i < maxRetries; i++) {
+            const className = await lastItem.getAttribute('class');
+            if (className && className.includes('completed')) {
+                found = true;
+                break;
+            }
+            await this.bingoPage.waitForTimeout(100);
+        }
+        if (!found) {
+            throw new Error(`Todo item "${todoText}" was not marked as completed.`);
         }
         await expect(lastItem).toBeVisible();
     }
