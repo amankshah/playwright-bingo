@@ -12,8 +12,7 @@ class LocatorManager {
     getAllLocators() {
         return {            ...this.getAllLocators()
         };
-        return {            ...this.getAllLocators()
-        };
+       
         return {
             todo: this.todo
         };
