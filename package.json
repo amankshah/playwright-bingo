@@ -33,6 +33,7 @@
   },
   "scripts": {
     "test": "cucumber-js",
+    "test:hello": "cucumber-js tests/features/hello.feature --require tests/step-definitions/hello.steps.js",
     "addPage": "bingo add page login",
     "deletePage": "bingo delete page login",
     "updatePage": "bingo update page login newPage",

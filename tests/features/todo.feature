@@ -26,9 +26,7 @@ Feature: Todo List Management
     Then I should see "Email: test@example.com"
     And I should see "Password: secret"
 
-  Scenario: Display welcome message from properties file
-    Given I load the properties file
-    Then I should see the welcome message "Welcome to Playwright Bingo!"
+
 
   
 
