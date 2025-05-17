@@ -24,6 +24,17 @@ Feature: Todo List Management
     Given I am on the todo page
     When I enter my credentials
     Then I should see "Email: test@example.com"
-    And I should see "Password: secret" 
+    And I should see "Password: secret"
+
+  Scenario: Display welcome message from properties file
+    Given I load the properties file
+    Then I should see the welcome message "Welcome to Playwright Bingo!"
+
+  
+
+  Scenario: Validate masking and unmasking of sensitive value
+    Given I mask the value "SensitiveSecret123!"
+    Then the value should be masked
+    And unmasking should return the original value 
 
 

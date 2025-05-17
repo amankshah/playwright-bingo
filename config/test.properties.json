@@ -1,0 +1,5 @@
+{
+  "welcomeMessage": "Welcome to Playwright Bingo!",
+  "apiKey": "12345-ABCDE-SECRET-KEY",
+  "secret": "supersecretvalue"
+} 
