@@ -1,15 +1,16 @@
 const { expect } = require('@playwright/test');
-const LocatorManager = require('../locators');
+const { PageManager } = require('playwright-bingo');
 
 class HelloActions {
-    constructor(bingoPage) {
-        this.bingoPage = bingoPage;
-        const locatorManager = new LocatorManager(bingoPage.page);
-        this.hello = locatorManager.hello;
+    constructor(page) {
+        // Use PageManager to get locators for 'hello'
+        const pm = new PageManager(page);
+        this.helloLocators = pm.page('hello').locators;
+        this.page = page;
     }
     // Add your page actions here
-    async verifyWelcomeMessage() {
-        await expect(this.hello.welcomeMessage).toBe("Welcome to Playwright Bingo!");
+    async verifyWelcomeMessage(expectedMessage) {
+        await expect(this.helloLocators.welcomeMessage).toBe(expectedMessage);
     }
 }
 

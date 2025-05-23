@@ -1,17 +1,16 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
-const { PageManager, env } = require('playwright-bingo');
-const TodoActions = require('../../pages/actions/todo.actions.js');
+const {  env } = require('playwright-bingo');
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const { mask, isMasked, getOriginalValue } = require('../../lib/mask');
-
+const PageManager = require('../../page.manager');
 
 Given('I am on the todo page', async function() {
-    await PageManager.initialize();
-    this.page = await PageManager.getPage('todo');
-    console.log('DEBUG: this.page.constructor.name =', this.page.constructor.name); // Should be BingoPage
-    this.todoActions = new TodoActions(this.page);
+    // this.page is provided by the Cucumber World (see hooks.js)
+    const pm = new PageManager(this.page);
+    const { actions } = pm.page('todo');
+    this.todoActions = actions;
     await this.todoActions.navigateToTodoPage();
 });
 

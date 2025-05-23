@@ -1,10 +1,15 @@
 const { Before, After, BeforeAll, AfterAll, setDefaultTimeout, setWorldConstructor } = require('@cucumber/cucumber');
-const { PageManager, BingoPage } = require('playwright-bingo');
+const { chromium } = require('@playwright/test');
+const { BingoPage } = require('playwright-bingo');
 const path = require('path');
 const fs = require('fs');
 
 // Set default timeout for all steps
 setDefaultTimeout(30000);
+
+// Module-scoped browser/context for all scenarios
+let browser;
+let context;
 
 // Define custom world
 class CustomWorld {
@@ -19,16 +24,17 @@ setWorldConstructor(CustomWorld);
 BeforeAll(async function() {
     console.clear();
     console.log("Starting browser");
-    await PageManager.initialize();
+    browser = await chromium.launch({ headless: true });
+    context = await browser.newContext();
 });
 
 Before(async function() {
-    this.page = await PageManager.getPage('todo');
-    this.bingoPage = this.page; // BingoPage instance
+    this.page = await context.newPage();
+    this.bingoPage = new BingoPage(this.page);
 });
 
 After(async function(scenario) {
-    if (scenario.result.status === 'FAILED') {
+    if (this.page && scenario.result.status === 'FAILED') {
         try {
             // Create screenshots directory if it doesn't exist
             const screenshotsDir = path.join(process.cwd(), 'screenshots');
@@ -51,12 +57,18 @@ After(async function(scenario) {
             console.error('Failed to take screenshot:', error);
         }
     }
-    // Optionally, you can close the page here if PageManager supports it
-    // await this.page.close();
+    if (this.page) {
+        await this.page.close();
+    }
 });
 
 AfterAll(async function() {
-    await PageManager.close();
+    if (context) {
+        await context.close();
+    }
+    if (browser) {
+        await browser.close();
+    }
     console.log("Browser closed");
     // process.exit(0); // Ensure CLI is ready for next prompt
 }); 

@@ -1,92 +1,51 @@
 const { expect } = require('@playwright/test');
-const LocatorManager = require('../locators');
+const { PageManager } = require('playwright-bingo');
 
 class TodoActions {
-    constructor(bingoPage) {
-        this.bingoPage = bingoPage;
-        const locatorManager = new LocatorManager(bingoPage.page);
-        this.todo = locatorManager.todo;
+    constructor(page) {
+        // Use PageManager to get locators for 'todo'
+        const pm = new PageManager(page);
+        this.todoLocators = pm.page('todo').locators;
+        this.page = page;
     }
 
     async navigateToTodoPage() {
-        await this.bingoPage.goto('https://demo.playwright.dev/todomvc');
-        await this.bingoPage.waitForLoadState('networkidle');
+        await this.page.goto('https://demo.playwright.dev/todomvc');
+        await this.page.waitForLoadState('networkidle');
     }
 
     async addTodoItem(todoText) {
-        const input = await this.bingoPage.waitForElement(this.todo.todoInput);
+        const input = await this.page.waitForSelector(this.todoLocators.todoInput[1]);
         await input.fill(todoText);
         await input.press('Enter');
         // Wait for the last todo item with the given text to appear
-        const itemLocators = Array.isArray(this.todo.todoItems)
-            ? this.todo.todoItems.map(sel => `${sel}:has-text("${todoText}")`)
-            : [`${this.todo.todoItems}:has-text("${todoText}")`];
-        let lastItem;
-        for (const locator of itemLocators) {
-            const items = this.bingoPage.locator(locator);
-            if (await items.count() > 0) {
-                lastItem = items.last();
-                await lastItem.waitFor({ state: 'visible' });
-                break;
-            }
+        const itemLocator = `${this.todoLocators.todoItems}:has-text("${todoText}")`;
+        const items = this.page.locator(itemLocator);
+        if (await items.count() > 0) {
+            this._lastTodoItem = items.last();
+            await this._lastTodoItem.waitFor({ state: 'visible' });
         }
-        this._lastTodoItem = lastItem;
     }
 
     async verifyTodoItemVisible(todoText) {
-        const labelLocators = Array.isArray(this.todo.todoItemLabel)
-            ? this.todo.todoItemLabel.map(sel => `${sel}:has-text("${todoText}")`)
-            : [`${this.todo.todoItemLabel}:has-text("${todoText}")`];
-        let lastItem;
-        for (const locator of labelLocators) {
-            const items = this.bingoPage.locator(locator);
-            if (await items.count() > 0) {
-                lastItem = items.last();
-                break;
-            }
-        }
-        await expect(lastItem).toBeVisible();
+        const labelLocator = `${this.todoLocators.todoItemLabel}:has-text("${todoText}")`;
+        const items = this.page.locator(labelLocator);
+        await expect(items.last()).toBeVisible();
     }
 
     async completeTodoItem(todoText) {
-        const itemLocators = Array.isArray(this.todo.todoItems)
-            ? this.todo.todoItems.map(sel => `${sel}:has-text("${todoText}")`)
-            : [`${this.todo.todoItems}:has-text("${todoText}")`];
-        let lastItem;
-        for (const locator of itemLocators) {
-            const items = this.bingoPage.locator(locator);
-            if (await items.count() > 0) {
-                lastItem = items.last();
-                break;
-            }
-        }
-        const checkboxLocators = Array.isArray(this.todo.todoItemCheckbox)
-            ? this.todo.todoItemCheckbox
-            : [this.todo.todoItemCheckbox];
-        let toggle;
-        for (const cbSel of checkboxLocators) {
-            try {
-                toggle = await lastItem.locator(cbSel);
-                if (await toggle.count() > 0) break;
-            } catch {}
-        }
+        const itemLocator = `${this.todoLocators.todoItems}:has-text("${todoText}")`;
+        const items = this.page.locator(itemLocator);
+        const lastItem = items.last();
+        const toggle = await lastItem.locator(this.todoLocators.todoItemCheckbox);
         await toggle.click();
         await lastItem.waitFor({ state: 'visible' });
     }
 
     async verifyTodoItemCompleted(todoText) {
-        // Wait for the completed class to appear on the todo item
-        const itemLocators = Array.isArray(this.todo.todoItems)
-            ? this.todo.todoItems.map(sel => `${sel}:has-text("${todoText}")`)
-            : [`${this.todo.todoItems}:has-text("${todoText}")`];
-        let lastItem;
-        for (const locator of itemLocators) {
-            const items = this.bingoPage.locator(locator);
-            if (await items.count() > 0) {
-                lastItem = items.last();
-                break;
-            }
-        }
+        const itemLocator = `${this.todoLocators.todoItems}:has-text("${todoText}")`;
+        const items = this.page.locator(itemLocator);
+        const lastItem = items.last();
         // Wait for the completed class to appear (retry for up to 2s)
         const maxRetries = 20;
         let found = false;
@@ -96,7 +55,7 @@ class TodoActions {
                 found = true;
                 break;
             }
-            await this.bingoPage.waitForTimeout(100);
+            await this.page.waitForTimeout(100);
         }
         if (!found) {
             throw new Error(`Todo item "${todoText}" was not marked as completed.`);
@@ -105,42 +64,22 @@ class TodoActions {
     }
 
     async deleteTodoItem(todoText) {
-        const itemLocators = Array.isArray(this.todo.todoItems)
-            ? this.todo.todoItems.map(sel => `${sel}:has-text("${todoText}")`)
-            : [`${this.todo.todoItems}:has-text("${todoText}")`];
-        let lastItem;
-        for (const locator of itemLocators) {
-            const items = this.bingoPage.locator(locator);
-            if (await items.count() > 0) {
-                lastItem = items.last();
-                break;
-            }
-        }
-        const deleteLocators = Array.isArray(this.todo.todoItemDeleteButton)
-            ? this.todo.todoItemDeleteButton
-            : [this.todo.todoItemDeleteButton];
-        let deleteButton;
-        for (const delSel of deleteLocators) {
-            try {
-                deleteButton = await lastItem.locator(delSel);
-                if (await deleteButton.count() > 0) break;
-            } catch {}
-        }
+        const itemLocator = `${this.todoLocators.todoItems}:has-text("${todoText}")`;
+        const items = this.page.locator(itemLocator);
+        const lastItem = items.last();
+        const deleteButton = await lastItem.locator(this.todoLocators.todoItemDeleteButton);
         await lastItem.hover();
         await deleteButton.click();
-        await this.bingoPage.waitForTimeout(500);
+        await this.page.waitForTimeout(500);
     }
 
     async verifyTodoListEmpty() {
-        // Wait a bit for the deletion to complete
-        await this.bingoPage.waitForTimeout(1000);
-        // Check if the list exists but has no items
-        const todoList = await this.bingoPage.findElement(this.todo.todoList, { checkExistence: false });
-        if (await this.bingoPage.elementExists(this.todo.todoList)) {
-            const items = await todoList.locator('li').count();
-            expect(items).toBe(0);
+        await this.page.waitForTimeout(1000);
+        if (await this.page.$(this.todoLocators.todoList[1])) {
+            const todoList = await this.page.$(this.todoLocators.todoList[1]);
+            const items = await todoList.$$('li');
+            expect(items.length).toBe(0);
         } else {
-            // If list doesn't exist, that's also fine
             expect(true).toBeTruthy();
         }
     }
